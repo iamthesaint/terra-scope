@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS tripzen_db;
+
+CREATE DATABASE tripzen_db;
