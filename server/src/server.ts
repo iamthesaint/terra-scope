@@ -2,7 +2,7 @@ const forceDatabaseRefresh = false;
 
 import express from 'express';
 import sequelize from './config/connection.js';
-import routes from './routes/index.js';
+// import routes from './routes/index.js'; COMMENTED OUT FOR WORKING FRONT-END
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3001;
 app.use(express.static('../client/dist'));
 
 app.use(express.json());
-app.use(routes);
+// app.use(routes);
 
 sequelize.sync({ force: forceDatabaseRefresh }).then(() => {
   app.listen(PORT, () => {
