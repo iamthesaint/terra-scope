@@ -38,3 +38,4 @@ export const searchDestinations = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error fetching destination data' });
   }
 };
+

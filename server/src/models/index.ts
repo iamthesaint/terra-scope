@@ -1,30 +1,26 @@
-import sequelize from '../config/connection';
+import sequelize from '../config/connection.js';
 import { UserFactory } from './user.js';
-import { CitiesFactory } from './cities.js';
-import { BookmarksFactory } from './bookmarks.js';
+import { CityFactory } from './city.js';
+import { ListFactory } from './list.js';
 
 const User = UserFactory(sequelize);
-const Cities = CitiesFactory(sequelize);
-const Bookmarks = BookmarksFactory(sequelize);
+const City = CityFactory(sequelize);
+const List = ListFactory(sequelize);
 
-User.hasMany(Bookmarks, {
-  foreignKey: 'user_id',
-  as: 'bookmarks',
+User.hasMany(List, {
+  foreignKey: 'list_id',
+  as: 'lists',
+  onDelete: 'CASCADE'
 });
 
-Bookmarks.belongsTo(User, {
-  foreignKey: 'user_id',
-  as: 'user',
-});
+List.belongsTo(User);
 
-Cities.hasMany(Bookmarks, {
+List.hasMany(City, {
   foreignKey: 'city_id',
-  as: 'bookmarks',
+  as: 'cities',
+  onDelete: "CASCADE"
 });
 
-Bookmarks.belongsTo(Cities, {
-  foreignKey: 'city_id',
-  as: 'city',
-});
+City.belongsTo(List);
 
-export { User, Cities, Bookmarks };
+export { User, City, List };
