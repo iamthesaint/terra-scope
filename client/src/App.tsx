@@ -6,17 +6,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 const App = () => {
-  return (
-    <Router>
-      <div className="App">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
-  );
-};
+ return (
+   <Router>
+     <Header />
+     <Routes>
+       <Route path="/" element={<Home />} />
+     </Routes>
+     <Footer />
+   </Router>
+ );
+
+}
 
 export default App;

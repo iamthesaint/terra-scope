@@ -1,16 +1,10 @@
 import express from 'express';
-import { flightRouter } from './routes/api/flightRoutes';
-import { destinationRouter } from './routes/api/destinationRoutes';
+import { router } from './routes';
 
 const app = express();
 
-// Middleware to parse incoming requests with JSON payloads
 app.use(express.json());
+app.use(router);
 
-// use the flight-related routes under api/flights
-app.use('/flights', flightRouter);
+export { app };
 
-// use the destination-related routes under api/destinations
-app.use('/destinations', destinationRouter);
-
-export default app;

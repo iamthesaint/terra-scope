@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import { userRouter } from './userRoutes.js';
-import { flightRouter } from './flightRoutes';
-import { destinationRouter } from './destinationRoutes';
 
 const router = Router();
 
@@ -13,10 +11,5 @@ router.get('/', (_req, res) => {
 // user routes
 router.use('/users', userRouter);
 
-// flight routes
-router.use('/flights', flightRouter)
-
-// destination routes
-router.use('/destinations', destinationRouter)
 
 export { router as apiRoutes };
