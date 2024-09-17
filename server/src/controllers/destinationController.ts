@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
+import axios from "axios";
 import { getDefaultCategories } from "../utils/categoryHelper";
 import {
   getPlacesByCategory,
   getPlacesByActivity,
   getWeatherInfo,
-  getPointsOfInterest,
-  getCityInfo,
+  getPointsOfInterest
 } from "../utils/apiHelper";
+
+const mapboxAccessToken = process.env.MAPBOX_ACCESS_TOKEN || "";
 
 
 export const searchDestinations = async (req: Request, res: Response) => {
@@ -27,10 +29,16 @@ export const searchDestinations = async (req: Request, res: Response) => {
 
     // case #2: search for a location and fetch data from mapbox (necessary coordinates)
     if (location) {
-      const cityData = await getCityInfo(location as string); // fetch city data
-      const [longitude, latitude] = cityData.features[0].center; // get the coordinates
+      const response = await axios.get(
+        `https://api.mapbox.com/search/searchbox/v1/forward?q=${location}`,
+        {
+          params: { access_token: mapboxAccessToken },
+        }
+      );
+      const cityData = response.data;
+      const [ longitude, latitude ] = cityData.features[0].geometry.coordinates;
       placeData = {
-        name: cityData.features[0].place_name,
+        name: cityData.features[0].text,
         coordinates: { latitude, longitude },
       };
 

@@ -6,12 +6,17 @@ const mapboxAccessToken = process.env.MAPBOX_ACCESS_TOKEN;
 const openWeatherKey = process.env.OPENWEATHER_API_KEY;
 const amadeusApiKey = process.env.AMADEUS_API_KEY;
 
-// fetch place information from the mapbox api
+// get city information from the mapbox api
 export const getCityInfo = async (city: string) => {
-
-    const response = await axios.get(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=${mapboxAccessToken}`
+  const response = await axios.get(
+    `https://api.mapbox.com/search/searchbox/v1/forward?q=${city}`,
+    {
+      params: {
+        access_token: mapboxAccessToken,
+      },
+    }
   );
+
   return response.data;
 };
 
