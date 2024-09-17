@@ -1,21 +1,20 @@
-// import sequelize from './config/connection';
-import { app } from './app.js';
-import dotenv from 'dotenv';
-dotenv.config();
+const forceDatabaseRefresh = false;
 
-// const forceDatabaseRefresh = false;
-// const PORT = process.env.PORT || 3001;
+import express from 'express';
+import sequelize from './config/connection.js';
+import routes from './routes/index.js';
 
-// // sync database and start server
-// sequelize.sync({ force: forceDatabaseRefresh }).then(() => {
-//   app.listen(PORT, () => {
-//     console.log(`Server is listening on port ${PORT}`);
-//   });
-// });
+const app = express();
+const PORT = process.env.PORT || 3001;
 
+// Serves static files in the entire client's dist folder
+app.use(express.static('../client/dist'));
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
+app.use(routes);
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+sequelize.sync({ force: forceDatabaseRefresh }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+  });
 });
