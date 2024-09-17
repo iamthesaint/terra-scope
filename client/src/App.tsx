@@ -1,16 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './pages/Home';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Header from "./components/header/header";
+import Footer from "./components/footer/footer";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
     <Router>
-      <Switch>
-        <Route path="/search" component={Search} />
-        <Route path="/" component={Home} />
-      </Switch>
+      <div className="App">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+        <Footer />
+      </div>
     </Router>
   );
 };
 
-export default App
+export default App;
