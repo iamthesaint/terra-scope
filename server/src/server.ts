@@ -1,20 +1,21 @@
-const forceDatabaseRefresh = false;
+// import sequelize from './config/connection';
+import { app } from './app.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
-import express from 'express';
-import sequelize from './config/connection';
-import { routes } from './routes/index';
+// const forceDatabaseRefresh = false;
+// const PORT = process.env.PORT || 3001;
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+// // sync database and start server
+// sequelize.sync({ force: forceDatabaseRefresh }).then(() => {
+//   app.listen(PORT, () => {
+//     console.log(`Server is listening on port ${PORT}`);
+//   });
+// });
 
-app.use(express.static('client/dist'));
 
-app.use(express.json());
-app.use('/api', routes);
+const PORT = process.env.PORT || 3000;
 
-sequelize.sync({ force: forceDatabaseRefresh }).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });
-

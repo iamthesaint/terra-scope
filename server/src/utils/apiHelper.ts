@@ -3,53 +3,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const mapboxAccessToken = process.env.MAPBOX_ACCESS_TOKEN;
-const openWeatherKey = process.env.OPENWEATHER_API_KEY;
-const amadeusApiKey = process.env.AMADEUS_API_KEY;
 
-// fetch place information from the mapbox api
-export const getCityInfo = async (city: string) => {
-
-    const response = await axios.get(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=${mapboxAccessToken}`
-  );
-  return response.data;
-};
-
-// fetch weather information from the openweather api
-export const getWeatherInfo = async (latitude: number, longitude: number) => {
+// get city information from the mapbox api
+export const getCityInfo = async () => {
   const response = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${openWeatherKey}`
-  );
-  return response.data;
-};
-
-// fetch nearby points of interest from the amadeus api
-export const getPointsOfInterest = async (latitude: number, longitude: number) => {
-  const response = await axios.get(
-    `https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=${latitude}&longitude=${longitude}&radius=20`,
+    `https://api.mapbox.com/search/searchbox/v1/suggest?q={search_text}`,
     {
-      headers: {
-        Authorization: `Bearer ${amadeusApiKey}`,
-      },
+      params: { access_token: mapboxAccessToken },
     }
   );
   return response.data;
-};
+}
 
-// fetch places by category without location
-export const getPlacesByCategory = async (category: string) => {
-  const response = await axios.get(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${category}.json?access_token=${mapboxAccessToken}`
-  );
-  return response.data;
-};
+// add get weather information from the open weather api
 
-// fetch places by activities without location
-export const getPlacesByActivity= async (activity: string) => {
-  const response = await axios.get(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${activity}.json?access_token=${mapboxAccessToken}`,
-  );
-  return response.data;
-};
 
 
