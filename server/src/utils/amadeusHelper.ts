@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Function to get access token
+// function to get access token
 const getAmadeusAccessToken = async () => {
   // amadeus requires a token to access their API
   const response = await axios.post(
