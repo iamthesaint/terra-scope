@@ -4,16 +4,13 @@ import {
     type InferCreationAttributes,
     type CreationOptional,
     DataTypes,
-    type HasManyAddAssociationMixin,
-    type HasManyAddAssociationsMixin,
-    type HasManyGetAssociationsMixin,
+    ForeignKey,
     type Sequelize,
   } from 'sequelize';
   import bcrypt from 'bcrypt';
-import { Bookmarks } from './bookmarks';
-  
-//   import type { Book } from './Book.js';
-  
+
+  import type { List } from './list';
+
     export class User extends Model<
     InferAttributes<User>,
     InferCreationAttributes<User>
@@ -22,11 +19,8 @@ import { Bookmarks } from './bookmarks';
     declare username: string;
     declare email: string;
     declare password: string;
-    
-    declare addBookmark: HasManyAddAssociationMixin<Bookmarks, number>;
-    declare addBookmarks: HasManyAddAssociationsMixin<Bookmarks, number>;
-    declare getBookmarks: HasManyGetAssociationsMixin<Bookmarks>;
-  
+    declare list_id: ForeignKey<List['id']>;
+
     public async setPassword(password: string) {
 
         const saltRounds = 10;
