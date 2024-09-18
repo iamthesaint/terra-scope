@@ -1,62 +1,41 @@
 .brand {
 
     text-align: center;
-    font-size: 65px;
+    font-size: 50px;
     color: #172A3A;
     font-family: 'Poppins', sans-serif;
     font-weight: 450;
     text-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
     0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075),
     0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075);
+
+    margin-left: 300px;
 }
 
 header {
 
     background-color: #09BC8A;
-    padding: 50px;
+    padding: 20px;
     box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
     0 2px 2px hsl(0deg 0% 0% / 0.1), 0 4px 4px hsl(0deg 0% 0% / 0.1),
     0 8px 8px hsl(0deg 0% 0% / 0.1), 0 16px 16px hsl(0deg 0% 0% / 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 50 20px;
-}
-
-.header-left, .header-right {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.header-center {
-    flex: 2;
-    text-align: center;
-}
-
-
-.search-icon {
-
-    font-size: 40px;
-    color: #172A3A;
-    cursor: pointer;
 }
 
 .login {
 
-    font-size: 40px;
+    font-size: 30px;
     cursor: pointer;
     color: inherit;
     text-decoration: none;
-}
-
-h3 {
-
     color: #172A3A;
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-    font-size: 40px;
     text-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
     0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075),
     0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075);
+
+    margin-right: 200px;
 }

@@ -8,11 +8,11 @@ const Login = () => {
             <form className="login-form">
                 <div className="form-group">
                     <label htmlFor="usernameOrEmail">Username or Email</label>
-                    <input type="text" id="usernameOrEmail" placeholder='Please enter username or email'/>
+                    <input type="text" id="usernameOrEmail" placeholder='Enter username or email'/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
-                    <input type="password" id="password" placeholder='Please enter password'/>
+                    <input type="password" id="password" placeholder='Enter password'/>
                 </div>
                 <div className="form-footer">
                     <p>Don't have an account? <Link to='/signup' className='signup-link'>Sign up</Link></p>

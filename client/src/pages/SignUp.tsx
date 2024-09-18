@@ -6,15 +6,15 @@ const Signup = () => {
             <form className="signup-form">
                 <div className="form-group">
                     <label htmlFor="usernameOrEmail">Username</label>
-                    <input type="text" id="usernameSignup" placeholder='Please create a username'/>
+                    <input type="text" id="usernameSignup" placeholder='Enter a username'/>
                 </div>
                 <div className='form-group'>
                     <label htmlFor="emailSignup">Email</label>
-                    <input type="text" id="emailSignup" placeholder='Please create a email'/>
+                    <input type="text" id="emailSignup" placeholder='Enter a email'/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="passwordSignup">Password</label>
-                    <input type="password" id="passwordSignup" placeholder='Please create a password'/>
+                    <input type="password" id="passwordSignup" placeholder='Enter a password'/>
                 </div>
                 <div className='form-footer'>
                     <button className='signupBtn'>Sign Up</button>
