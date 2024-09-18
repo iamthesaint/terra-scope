@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from 'mapbox-gl';
-mapboxgl.accessToken = 'pk.eyJ1IjoiaWFtdGhlc2FpbnQiLCJhIjoiY20xNXdza3hmMGUwczJrcHh6d29pb2t2aiJ9.G1-bTW5zput1V7yJj9gbxw';
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
