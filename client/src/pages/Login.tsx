@@ -1,16 +1,16 @@
 import '../styles/loginPage.css';
-import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { login } from '../api/authAPI.js'
+import Auth from '../utils/Auth.js';
+import { UserLogin } from '../interfaces/UserLogin';
 
 const Login = () => {
-    const location = useLocation();
-    const message = location.state?.message;
-
-    const [loginData, setLoginData] = useState({
-        email: '',
+    
+    const [loginData, setLoginData] = useState<UserLogin>({
+        username: '',
         password: ''
-    });
+      });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -23,47 +23,35 @@ const Login = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3001/api/users/login', loginData);
-            if (response.data.success) {
-                alert('Login successful!');
-                // Redirect to another page or perform other actions
-            } else {
-                alert('Invalid email or password.');
-            }
-        } catch (error) {
-            console.error('Error logging in:', error);
-            alert('An error occurred during login. Please try again.');
+          // Call the login API endpoint with loginData
+          const data = await login(loginData);
+          // If login is successful, call Auth.login to store the token in localStorage
+          Auth.login(data.token);
+        } catch (err) {
+          console.error('Failed to login', err);  // Log any errors that occur during login
         }
-    };
-
-    useEffect(() => {
-        if (message) {
-            alert(message);
-        }
-    }, [message]);
+      };
 
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="email">Email</label>
+                    <label>Username</label>
                     <input
                         type="text"
-                        id="email"
-                        name="email"
-                        placeholder="Enter email"
-                        value={loginData.email}
+                        name="username"
+                        placeholder="Enter username"
+                        value={loginData.username || ''}
                         onChange={handleChange}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="password">Password</label>
+                    <label>Password</label>
                     <input
                         type="password"
-                        id="password"
                         name="password"
                         placeholder="Enter password"
-                        value={loginData.password}
+                        value={loginData.password || ''}
                         onChange={handleChange}
                     />
                 </div>

@@ -39,16 +39,16 @@ const Signup = () => {
         <div className="signup-container">
             <form className="signup-form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="username">Username</label>
-                    <input type="text" id="username" placeholder='Enter a username' name='username' value={signUpData.username || ''} onChange={handleChange}/>
+                    <label>Username</label>
+                    <input type="text" placeholder='Enter a username' name='username' value={signUpData.username || ''} onChange={handleChange}/>
                 </div>
                 <div className='form-group'>
-                    <label htmlFor="email">Email</label>
-                    <input type="text" id="email" placeholder='Enter an email' name="email" value={signUpData.email || ''} onChange={handleChange}/>
+                    <label>Email</label>
+                    <input type="text" placeholder='Enter an email' name="email" value={signUpData.email || ''} onChange={handleChange}/>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input type="password" id="password" placeholder='Enter a password' name='password' value={signUpData.password || ''} onChange={handleChange}/>
+                    <label>Password</label>
+                    <input type="password" placeholder='Enter a password' name='password' value={signUpData.password || ''} onChange={handleChange}/>
                 </div>
                 <div className='form-footer'>
                     <button className='signupBtn' type='submit'>Sign Up</button>
