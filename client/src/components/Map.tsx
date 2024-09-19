@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from 'mapbox-gl';
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const [mapData] = useState<[]>([]);
-
 
   useEffect(() => {
     if (!mapContainerRef.current) return; 
