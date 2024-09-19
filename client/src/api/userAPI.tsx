@@ -1,4 +1,4 @@
-import Auth from '../utils/auth'; // Import the authentication utility for managing tokens
+import Auth from '../utils/Auth'; // Import the authentication utility for managing tokens
 
 // Function to fetch a list of users by sending a GET request to '/api/users'
 const retrieveUsers = async () => {
