@@ -1,7 +1,9 @@
 import '../styles/signupPage.css'
+
+import Auth from '../utils/Auth.js';
 import { useState, FormEvent, ChangeEvent } from "react";
-import axios from 'axios';
 import { UserLogin } from '../interfaces/UserLogin';
+import { signUp } from '../api/authAPI';
 
 const Signup = () => {
 
@@ -23,28 +25,30 @@ const Signup = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            
-            const response = await axios.post('http://localhost:3001/api/users', signUpData);
-            console.log('User signed up successfully:', response.data);
-        } catch (error) {
-            console.error('Error signing up user:', error);
-        }       
-    };
+          // Call the sign up API endpoint with signUpData
+          const data = await signUp(signUpData);
+          // If sign up is successful, call Auth.login to store the token in localStorage
+          Auth.login(data.token);
+          console.log('YAY IT WORKED')
+        } catch (err) {
+          console.error('Failed to login', err);  // Log any errors that occur during sign up
+        }
+      };
 
     return (
         <div className="signup-container">
             <form className="signup-form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="usernameSignup">Username</label>
-                    <input type="text" id="usernameSignup" placeholder='Enter a username' name='username' value={signUpData.username || ''} onChange={handleChange}/>
+                    <label>Username</label>
+                    <input type="text" placeholder='Enter a username' name='username' value={signUpData.username || ''} onChange={handleChange}/>
                 </div>
                 <div className='form-group'>
-                    <label htmlFor="emailSignup">Email</label>
-                    <input type="text" id="emailSignup" placeholder='Enter an email' name="email" value={signUpData.email || ''} onChange={handleChange}/>
+                    <label>Email</label>
+                    <input type="text" placeholder='Enter an email' name="email" value={signUpData.email || ''} onChange={handleChange}/>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="passwordSignup">Password</label>
-                    <input type="password" id="passwordSignup" placeholder='Enter a password' name='password' value={signUpData.password || ''} onChange={handleChange}/>
+                    <label>Password</label>
+                    <input type="password" placeholder='Enter a password' name='password' value={signUpData.password || ''} onChange={handleChange}/>
                 </div>
                 <div className='form-footer'>
                     <button className='signupBtn' type='submit'>Sign Up</button>
