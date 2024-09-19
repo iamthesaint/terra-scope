@@ -1,6 +1,10 @@
-const forceDatabaseRefresh = false;
+const forceDatabaseRefresh = true;
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 import express from 'express';
+import cors from 'cors';
 import sequelize from './config/connection.js';
 import routes from './routes/index.js';
 import dotenv from "dotenv";
@@ -9,13 +13,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Serves static files in the entire client's dist folder
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+
 app.use(express.static('../client/dist'));
 
 app.use(express.json());
 app.use(routes);
 
-sequelize.sync({ force: forceDatabaseRefresh }).then(() => {
+sequelize.sync({force: forceDatabaseRefresh}).then(() => {
   app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
   });
