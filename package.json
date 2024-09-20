@@ -20,6 +20,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@types/lodash": "^4.17.7",
         "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
         "@types/node": "^22.5.5",
         "concurrently": "^8.2.2",

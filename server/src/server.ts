@@ -1,8 +1,4 @@
 const forceDatabaseRefresh = true;
-
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import cors from 'cors';
 import sequelize from './config/connection.js';
