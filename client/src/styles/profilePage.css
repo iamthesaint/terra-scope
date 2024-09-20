@@ -1,0 +1,111 @@
+.profile-page {
+
+    display: flex;
+    width: 100%;
+    height: 80vh;
+}
+
+.profile-wrapper {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34%;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.profile-container {
+
+    width: 70%;
+}
+
+.profile-header {
+
+    background-color: #09BC8A;
+    padding: 16px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
+    0 2px 2px hsl(0deg 0% 0% / 0.1), 0 4px 4px hsl(0deg 0% 0% / 0.1),
+    0 8px 8px hsl(0deg 0% 0% / 0.1), 0 16px 16px hsl(0deg 0% 0% / 0.1);
+}
+
+.profile-body {
+
+    padding: 16px;
+    background-color: #fff;
+    height: 200px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
+    0 2px 2px hsl(0deg 0% 0% / 0.1), 0 4px 4px hsl(0deg 0% 0% / 0.1),
+    0 8px 8px hsl(0deg 0% 0% / 0.1), 0 16px 16px hsl(0deg 0% 0% / 0.1);
+}
+
+.profile-opt {
+
+    text-align: center;
+    padding: 20px
+}
+
+.profile-opt:hover {
+
+    cursor: pointer;
+}
+
+.content-container {
+
+    width: 66%;
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    overflow: auto;
+    margin-top: 20px;
+}
+
+.box {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 20px;
+    width: calc(33.333% - 20px);
+    box-sizing: border-box;
+    max-height: 300px;
+    height: 300px;
+    box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
+    0 2px 2px hsl(0deg 0% 0% / 0.1), 0 4px 4px hsl(0deg 0% 0% / 0.1),
+    0 8px 8px hsl(0deg 0% 0% / 0.1), 0 16px 16px hsl(0deg 0% 0% / 0.1);
+    overflow: auto;
+}
+
+.box-header {
+
+    font-weight: bold;
+    margin-bottom: 10px;
+    background-color: #09BC8A;
+    width: 100%;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+}
+
+.header-text {
+
+    font-size: 35px;
+}
+
+.box-body {
+    
+    text-align: center;
+}
+
+.box-body h3 {
+
+    margin: 20px;
+
+}

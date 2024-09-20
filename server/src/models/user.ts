@@ -64,7 +64,7 @@ import {
             },
           },
         sequelize,
-        timestamps: false,
+        timestamps: true,
         underscored: true,
         modelName: 'user',
       }
