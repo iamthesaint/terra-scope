@@ -25,84 +25,9 @@ const ProfilePage = () => {
                         <h3>Los Angeles, California</h3>
                     </div>
                 </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
-                    </div>
-                </div>
-                <div className="box">
-                    <div className="box-header">
-                        <h1 className='header-text'>Big Cities</h1>
-                    </div>
-                    <div className="box-body">
-                        <h3>Tokyo, Japan</h3>
-                        <h3>New York City, New York</h3>
-                        <h3>Los Angeles, California</h3>
+                <div className='add-list'>
+                    <div className='add-list-body'>
+                        <h1>+</h1>
                     </div>
                 </div>
             </div>
