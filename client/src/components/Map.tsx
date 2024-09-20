@@ -14,7 +14,7 @@ export default function Map() {
     // Initialize the map
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/satellite-v9", // custom style url from mapbox studio
+      style: "mapbox://styles/iamthesaint/cm1b4ht2q00mu01qk2npuh13w", // custom style url from mapbox studio
       projection: "globe", // display the map as a globe
       zoom: 1.5,
       center: [-90, 40], // center the map on a location
