@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
-import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import axios from 'axios';
+import throttle from 'lodash/throttle';
 import mapboxgl from "mapbox-gl";
-import throttle from 'lodash/throttle'; // You can use lodash throttle or write a custom one
+import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useRef } from "react";
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -11,18 +12,16 @@ export default function Map() {
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // Initialize the map
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/iamthesaint/cm1b4ht2q00mu01qk2npuh13w", // custom style url from mapbox studio
-      projection: "globe", // display the map as a globe
+      style: "mapbox://styles/iamthesaint/cm1b4ht2q00mu01qk2npuh13w",
+      projection: "globe",
       zoom: 1.5,
-      center: [-90, 40], // center the map on a location
+      center: [-90, 40],
     });
 
-    // Handle map style animations
     map.on("style.load", () => {
-      map.setFog({}); // set default atmosphere style
+      map.setFog({});
     });
 
     let userInteracting = false;
@@ -43,9 +42,8 @@ export default function Map() {
         center.lng -= distancePerSecond;
         map.easeTo({ center, duration: 1000, easing: (n) => n });
       }
-    }, 100); // Throttling for better performance (every 100ms)
+    }, 100);
 
-    // Map event listeners for globe interaction
     map.on("mousedown", () => {
       userInteracting = true;
     });
@@ -69,16 +67,79 @@ export default function Map() {
       spinGlobe();
     });
 
-    // Start the initial spin
     spinGlobe();
+
+    const locations = [
+      { lng: -74.006, lat: 40.7128, name: "New York City" },
+      { lng: 2.3522, lat: 48.8566, name: "Paris" },
+      { lng: 139.6917, lat: 35.6895, name: "Tokyo" }
+    ];
+
+    const fetchWeather = async (lat: number, lon: number) => {
+      const apiKey = import.meta.env.VITE_OPEN_WEATHERMAP_API_KEY;
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+      try {
+        const response = await axios.get(weatherUrl);
+        const { main, weather } = response.data;
+        return {
+          temp: main.temp,
+          description: weather[0].description,
+        };
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+        return {
+          temp: "--",
+          description: "Weather data unavailable",
+        };
+      }
+    };
+
+    const truncateDescription = (description: string, maxLength: number) => {
+      if (description.length > maxLength) {
+        return description.substring(0, maxLength) + "...";
+      }
+      return description;
+    };
+
+    const fetchDescription = async (placeName: string) => {
+      try {
+        const response = await axios.get(
+          `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=extracts&exintro&explaintext&format=json&titles=${encodeURIComponent(placeName)}`
+        );
+        const page = Object.values(response.data.query.pages)[0];
+        const pageData = page as { extract?: string };
+        return pageData.extract || "No description available";
+      } catch (error) {
+        console.error("Error fetching Wikipedia description:", error);
+        return "No description available";
+      }
+    };
+
+    locations.forEach(async (location) => {
+      const description = await fetchDescription(location.name);
+      const truncatedDescription = truncateDescription(description, 150); // Limit to 150 characters
+      const weatherData = await fetchWeather(location.lat, location.lng); // Fetch weather data
+
+      const popupContent = `
+        <div style="max-width: 200px;">
+          <h3>${location.name}</h3>
+          <p>${truncatedDescription}</p>
+          <p><strong>Weather:</strong> ${weatherData.temp}°C, ${weatherData.description}</p>
+        </div>
+      `;
+
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent);
+
+      new mapboxgl.Marker()
+        .setLngLat([location.lng, location.lat])
+        .setPopup(popup)
+        .addTo(map);
+    });
 
     return () => {
       map.remove();
     };
   }, []);
-
-  // Set a test cookie
-  document.cookie = "myCookie=value; SameSite=None; Secure";
 
   return <div className="map-container" ref={mapContainerRef} style={{ width: "100%", height: "100vh" }} />;
 }
