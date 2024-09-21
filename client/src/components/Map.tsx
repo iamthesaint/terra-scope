@@ -4,6 +4,8 @@ import throttle from 'lodash/throttle';
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef } from "react";
+import "../styles/Map.css";
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -23,6 +25,17 @@ export default function Map() {
     map.on("style.load", () => {
       map.setFog({});
     });
+
+    const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      marker: true, 
+      zoom: 10, 
+      placeholder: "Search for places", 
+    });
+
+    // Add the geocoder to the map
+    map.addControl(geocoder);
+
 
     let userInteracting = false;
     const spinEnabled = true;
@@ -76,19 +89,28 @@ export default function Map() {
     ];
 
     const fetchWeather = async (lat: number, lon: number) => {
-      const apiKey = import.meta.env.VITE_OPEN_WEATHERMAP_API_KEY;
-      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+      const apiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`; // units=imperial for fahrenheit
+    
       try {
         const response = await axios.get(weatherUrl);
-        const { main, weather } = response.data;
-        return {
-          temp: main.temp,
-          description: weather[0].description,
-        };
+        if (response.status === 200) {
+          const { main, weather } = response.data;
+          return {
+            temp: main.temp,  // temp in °F
+            description: weather[0].description,
+          };
+        } else {
+          console.error(`Weather API responded with status: ${response.status}`);
+          return {
+            temp: "--°F",
+            description: "Weather data unavailable",
+          };
+        }
       } catch (error) {
         console.error("Error fetching weather data:", error);
         return {
-          temp: "--",
+          temp: "--°F",
           description: "Weather data unavailable",
         };
       }
@@ -117,14 +139,14 @@ export default function Map() {
 
     locations.forEach(async (location) => {
       const description = await fetchDescription(location.name);
-      const truncatedDescription = truncateDescription(description, 150); // Limit to 150 characters
-      const weatherData = await fetchWeather(location.lat, location.lng); // Fetch weather data
+      const truncatedDescription = truncateDescription(description, 150); 
+      const weatherData = await fetchWeather(location.lat, location.lng);
 
       const popupContent = `
         <div style="max-width: 200px;">
           <h3>${location.name}</h3>
           <p>${truncatedDescription}</p>
-          <p><strong>Weather:</strong> ${weatherData.temp}°C, ${weatherData.description}</p>
+          <p><strong>Weather:</strong> ${weatherData.temp}°F, ${weatherData.description}</p>
         </div>
       `;
 
