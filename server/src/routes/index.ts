@@ -5,7 +5,9 @@ import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 
-router.use('/api', authenticateToken, apiRoutes);
+router.use('/api', 
+    authenticateToken,
+     apiRoutes);
 router.use('/auth', authRoutes);
 
 
