@@ -2,7 +2,7 @@ import '../styles/loginPage.css';
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { login } from '../api/authAPI.js'
-import Auth from '../utils/Auth.js';
+import Auth from '../utils/auth.js';
 import { UserLogin } from '../interfaces/UserLogin';
 
 const Login = () => {
