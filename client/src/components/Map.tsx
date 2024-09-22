@@ -28,25 +28,24 @@ export default function Map() {
 
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
-      marker: true, 
       zoom: 10, 
-      placeholder: "Search for places", 
+      placeholder: "Search for any location on Earth!", 
     });
 
-    // Add the geocoder to the map
-    map.addControl(geocoder);
+    // add the geocoder to the map
+    map.addControl(geocoder, "top-left");
 
 
     let userInteracting = false;
     const spinEnabled = true;
-    const secondsPerRevolution = 120;
-    const maxSpinZoom = 5;
-    const slowSpinZoom = 3;
+    const secondsPerRevolution = 130;
+    const maxSpinZoom = 4;
+    const slowSpinZoom = 2;
 
     const spinGlobe = throttle(() => {
       const zoom = map.getZoom();
       if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-        let distancePerSecond = 360 / secondsPerRevolution;
+        let distancePerSecond = 340 / secondsPerRevolution; 
         if (zoom > slowSpinZoom) {
           const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
           distancePerSecond *= zoomDif;
@@ -56,6 +55,10 @@ export default function Map() {
         map.easeTo({ center, duration: 1000, easing: (n) => n });
       }
     }, 100);
+
+    // fetch wikipedia info on searched location
+ 
+    // fetch weather info on searched location
 
     map.on("mousedown", () => {
       userInteracting = true;
@@ -97,7 +100,7 @@ export default function Map() {
         if (response.status === 200) {
           const { main, weather } = response.data;
           return {
-            temp: main.temp,  // temp in °F
+            temp: Math.round(main.temp),  // temp in °F to nearest whole number
             description: weather[0].description,
           };
         } else {
