@@ -1,75 +1,62 @@
-import {
-    Model,
-    type InferAttributes,
-    type InferCreationAttributes,
-    type CreationOptional,
-    DataTypes,
-    ForeignKey,
-    type Sequelize,
-  } from 'sequelize';
-  import bcrypt from 'bcrypt';
+import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+dotenv.config();
 
-  import type { List } from './list';
+interface UserAttributes {
+  id: number;
+  username: string;
+  password: string;
+}
 
-    export class User extends Model<
-    InferAttributes<User>,
-    InferCreationAttributes<User>
-  > {
-    declare id: CreationOptional<number>;
-    declare username: string;
-    declare email: string;
-    declare password: string;
-    declare list_id: ForeignKey<List['id']>;
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
 
-    public async setPassword(password: string) {
+export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+  public id!: number;
+  public username!: string;
+  public password!: string;
 
-        const saltRounds = 10;
-        this.password = await bcrypt.hash(password, saltRounds)
-    }
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+
+  public async setPassword(password: string) {
+    const saltRounds = 10;
+    this.password = await bcrypt.hash(password, saltRounds);
   }
-  
-  export function UserFactory(sequelize: Sequelize) {
-    User.init(
-      {
-        id: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-        },
-        username: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        email: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          unique: true,
-          validate: {
-            isEmail: true,
-          },
-        },
-        password: {
-          type: DataTypes.STRING,
-          allowNull: false
-        }
+}
+
+export function UserFactory(sequelize: Sequelize): typeof User {
+  User.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
       },
-      {
-        hooks: {
-            beforeCreate: async (user: User) => {
-              await user.setPassword(user.password);
-            },
-            beforeUpdate: async (user: User) => {
-              await user.setPassword(user.password);
-            },
-          },
-        sequelize,
-        timestamps: true,
-        underscored: true,
-        modelName: 'user',
-      }
-    );
-  
-    return User;
-  }
-  
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: 'users',
+      sequelize,
+      hooks: {
+        beforeCreate: async (user: User) => {
+          await user.setPassword(user.password);
+        },
+        beforeUpdate: async (user: User) => {
+          if (user.changed('password')) {
+            await user.setPassword(user.password);
+          }
+        },
+      },
+    }
+  );
+
+  return User;
+}

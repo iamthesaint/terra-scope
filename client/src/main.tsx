@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import React from "react";
 
 import App from './App.tsx'
 import './index.css';
@@ -9,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home.tsx';
 import Error from './pages/ErrorPage.tsx';
 import Login from "./pages/Login.tsx";
-import Signup from "./pages/SignUp.tsx";
+// import Signup from "./pages/SignUp.tsx";
 import Settings from "./pages/settings.tsx";
 import ProfilePage from "./pages/profilePage.tsx";
 
@@ -23,25 +22,17 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />
-      },
+      }, 
       {
-        path: '/home',
-        element: <Home />
-      },
-      {
-        path: '/login',
+        path: 'login',
         element: <Login />
       },
       {
-        path: '/signup',
-        element: <Signup />
-      },
-      {
-        path: '/settings',
+        path: 'settings',
         element: <Settings />
       },
       {
-        path: '/profile',
+        path: 'profile',
         element: <ProfilePage />
       }
     ]
@@ -50,12 +41,5 @@ const router = createBrowserRouter([
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
-  );
-} else {
-  console.error("Root element not found");
+  ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);
 }

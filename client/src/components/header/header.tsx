@@ -1,14 +1,21 @@
 import "./header.css";
-
 import { Link } from "react-router-dom";
 import Profile from "../profile/profile.js";
 import Auth from "../../utils/auth.js";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Make sure to include this for Bootstrap JS
+
+declare global {
+  interface Window {
+    bootstrap: typeof import("bootstrap");
+  }
+}
 
 export default function Header() {
   const [loginCheck, setLoginCheck] = useState(false);
+  const navigate = useNavigate();
 
   const checkLogin = () => {
     if (Auth.loggedIn()) {
@@ -20,6 +27,22 @@ export default function Header() {
     checkLogin();
   }, [loginCheck]);
 
+  // Function to open the offcanvas manually
+  const handleToggleMenu = () => {
+    const myOffcanvas = document.getElementById("offcanvasRight");
+    if (myOffcanvas) {
+      const bsOffcanvas = new window.bootstrap.Offcanvas(myOffcanvas);
+      bsOffcanvas.toggle();
+
+      // Close the offcanvas when clicking outside of it
+      myOffcanvas.addEventListener("hidden.bs.offcanvas", function () {
+        bsOffcanvas.hide();
+      });
+    }
+  };
+
+    
+
   return (
     <div>
       <header>
@@ -30,12 +53,7 @@ export default function Header() {
             <h3 className="login">Log In</h3>
           </Link>
         ) : (
-          <div
-            className="profile"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasRight"
-            aria-controls="offcanvasRight"
-          >
+          <div className="profile" onClick={handleToggleMenu}>
             <Profile />
 
             <div
@@ -45,7 +63,7 @@ export default function Header() {
               aria-labelledby="offcanvasRightLabel"
             >
               <div className="offcanvas-header">
-                <h2 id="offcanvasRightLabel">Hello, User</h2>
+                <h2 id="offcanvasRightLabel">Hello, Traveler!</h2>
                 <button
                   type="button"
                   className="btn-close text-reset"
@@ -54,10 +72,10 @@ export default function Header() {
                 ></button>
               </div>
               <div className="offcanvas-body">
-              <Link to="/home">
+                <Link to="/">
                   <h3 className="options">Home</h3>
                 </Link>
-              <Link to="/profile">
+                <Link to="/profile">
                   <h3 className="options">My Profile</h3>
                 </Link>
                 <Link to="/settings">
@@ -67,6 +85,7 @@ export default function Header() {
                   className="logout"
                   onClick={() => {
                     Auth.logout();
+                    navigate("/login");
                   }}
                 >
                   Log Out
@@ -79,3 +98,5 @@ export default function Header() {
     </div>
   );
 }
+
+

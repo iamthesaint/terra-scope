@@ -1,42 +1,37 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
-// Extend the Request interface to include the user property
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: JwtPayload;
-  }
-}
-import jwt from 'jsonwebtoken';
-
-// Define the interface for the JWT payload
 interface JwtPayload {
   username: string;
 }
 
-// Middleware function to authenticate JWT token
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  // Get the authorization header from the request
-  const authHeader = req.headers.authorization;
+export const authenticateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  
+  // verify the token exists and add the user data to the request object
 
-  // Check if the authorization header is present
+const authHeader = req.headers.authorization;
+
   if (authHeader) {
-    // Extract the token from the authorization header
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
+    const secretKey = process.env.JWT_SECRET_KEY || "";
 
-    // Get the secret key from the environment variables
-    const secretKey = process.env.JWT_SECRET_KEY || '';
-
-    // Verify the JWT token
     jwt.verify(token, secretKey, (err, user) => {
       if (err) {
-        return res.sendStatus(403); // Send forbidden status if the token is invalid
+        return res.sendStatus(403); // forbidden
       }
 
-      // Attach the user information to the request object
       req.user = user as JwtPayload;
-      return next(); // Call the next middleware function
+      return next();
     });
   } else {
-    res.sendStatus(401); // Send unauthorized status if no authorization header is present
+    res.sendStatus(401); // unauthorized
   }
 };
+
+
