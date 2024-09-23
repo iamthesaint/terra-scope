@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { userRouter } from './api/user-routes.js';
-import { authRouter } from './auth-routes.js';
-import { tripadvRouter } from './api/tripadv.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { apiRouter } from './api/index.js';
+import authRouter from './auth-routes.js';
+import apiRouter from './api/index.js';
+import tripadvRouter from './api/tripadv.js';
+import userRouter from './api/index.js';
+
 
 const router = Router();
 
@@ -17,6 +18,6 @@ router.use('/users', authenticateToken, userRouter);
 router.use('/api', apiRouter);
 
 // tripadvisor routes
-router.use('/tripadvisor', authenticateToken, tripadvRouter);
+router.use('/tripadvisor', tripadvRouter);
 
 export default router;

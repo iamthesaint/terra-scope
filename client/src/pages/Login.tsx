@@ -47,7 +47,7 @@ const Login = () => {
   return (
     <div className="container form-container">
       <form className="form login-form" onSubmit={handleSubmit}>
-        <h1>Login to Kanban</h1>
+        <h1>Login to Trip Zen</h1>
         {/* Username input field */}
         <div className="form">
           <label>Username</label>

@@ -79,4 +79,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-export { router as tripadvRouter };
+export default router;
