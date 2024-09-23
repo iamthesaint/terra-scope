@@ -1,25 +1,31 @@
-const forceDatabaseRefresh = true;
-import express from 'express';
-// import cors from 'cors';
-import sequelize from './config/connection.js';
-import routes from './routes/index.js';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
 
+const forceDatabaseRefresh = false;
+
+console.log('Environment Variables:');
+console.log('DB_NAME:', process.env.DB_NAME);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+console.log('JWT_SECRET_KEY:', process.env.JWT_SECRET_KEY);
+
+import express from 'express';
+import routes from './routes/index.js';
+import { sequelize } from './models/index.js';
+
 console.log("TripAdvisor API key:", process.env.TRIPADVISOR_API_KEY);
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// app.use(cors({
-//   origin: 'http://localhost:3000'
-// }));
-
-app.use(express.static('../client/dist'));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(routes);
+
+//serve after api
+app.use(express.static('../client/dist'));
+
 
 sequelize.sync({force: forceDatabaseRefresh}).then(() => {
   app.listen(PORT, () => {

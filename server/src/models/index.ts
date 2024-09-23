@@ -1,26 +1,35 @@
-import sequelize from '../config/connection.js';
-import { UserFactory } from './user.js';
-import { CityFactory } from './city.js';
-import { ListFactory } from './list.js';
+import dotenv from "dotenv";
+dotenv.config();
+import { Sequelize } from "sequelize";
+import { UserFactory } from "./user.js";
 
+// db url for render deployment
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+      dialect: "postgres",
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      },
+    })
+  : new Sequelize(
+      process.env.DB_NAME || "your_db_name",
+      process.env.DB_USER || "your_db_user",
+      process.env.DB_PASSWORD || "your_db_password",
+      {
+        host: process.env.DB_HOST || "localhost",
+        dialect: "postgres",
+        dialectOptions: {
+          decimalNumbers: true,
+        },
+      }
+    );
+
+// init models
 const User = UserFactory(sequelize);
-const City = CityFactory(sequelize);
-const List = ListFactory(sequelize);
 
-User.hasMany(List, {
-  foreignKey: 'list_id',
-  as: 'lists',
-  onDelete: 'CASCADE'
-});
+// create associations here for the models
 
-List.belongsTo(User);
-
-List.hasMany(City, {
-  foreignKey: 'city_id',
-  as: 'cities',
-  onDelete: "CASCADE"
-});
-
-City.belongsTo(List);
-
-export { User, City, List };
+export { sequelize, User };
