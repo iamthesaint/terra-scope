@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import cors from 'cors';
 
 const forceDatabaseRefresh = false;
 
@@ -19,6 +20,7 @@ console.log("TripAdvisor API key:", process.env.TRIPADVISOR_API_KEY);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(routes);
