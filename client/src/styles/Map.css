@@ -1,3 +1,9 @@
+#map-container {
+  height: 100%;
+  width: 100%;
+  background-color: lightblue;
+}
+
 /* pop-up pins */
 
 /* popup container */
@@ -20,9 +26,10 @@
 
 /* close button */
 .mapboxgl-popup-close-button {
-  font-size: 40px;
+  font-size: 35px;
   padding: 10px;
   color: #555;
+
 }
 
 /* popup tip (the little triangle) */
@@ -64,4 +71,10 @@
 /* mag icon */
 .mapboxgl-ctrl-geocoder--button {
   background: transparent;
+}
+
+.mapboxgl-ctrl-top-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
