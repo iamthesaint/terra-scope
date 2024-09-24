@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import "../styles/Map.css";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { fetchTripAdvisorData } from "../api/tripadvAPI";
+import axios from "axios";
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -61,23 +62,56 @@ export default function Map() {
       const placeName = result.text;
 
       // create a new popup and set its coordinates and text
-      const popup = new mapboxgl.Popup({ offset: 25 })
+      const popup = new mapboxgl.Popup({ offset: 25, closeOnClick: false })
         .setLngLat(coordinates)
         .setHTML(`<p>Loading...</p>`)
         .addTo(map);
+
+      // fetch weather data from openweathermap api
+    const fetchWeather = async (lat: number, lon: number) => {
+      const apiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`; // units=imperial for fahrenheit
+    
+      try {
+        const response = await axios.get(weatherUrl);
+        if (response.status === 200) {
+          const { main, weather } = response.data;
+          return {
+            temp: Math.round(main.temp),  // temp in °F to nearest whole number
+            description: weather[0].description,
+          };
+        } else {
+          console.error(`Weather API responded with status: ${response.status}`);
+          return {
+            temp: "--°F",
+            description: "Weather data unavailable",
+          };
+        }
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+        return {
+          temp: "--°F",
+          description: "Weather data unavailable",
+        };
+      }
+    };
 
       // fetch data from tripadvisor api
       try {
         const tripAdvisorData = await fetchTripAdvisorData(placeName);
         if (tripAdvisorData) {
-          const infoHtml = `
-          <div>
-          <h3>${tripAdvisorData.name}</h3>
-          <p>${tripAdvisorData.description}</p>
-          <img src="${tripAdvisorData.image}" alt="${tripAdvisorData.name}" style="width:100%; height:auto;"/>
-          <a href="${tripAdvisorData.web_url}" target="_blank">Learn more</a>
-        </div>
-      `;
+            const infoHtml = `
+            <div style="text-align: center;">
+            <h3>${tripAdvisorData.name}</h3>
+            <p>${tripAdvisorData.description}</p>
+            <img src="${tripAdvisorData.image}" alt="${tripAdvisorData.name}" style="width:100%; height:auto;"/>
+            <a href="${tripAdvisorData.web_url}" target="_blank">Learn more</a>
+            <p>Current Weather: ${await fetchWeather(coordinates[1], coordinates[0]).then(
+              (weather) => `${weather.temp}°F, ${weather.description}`
+            )}</p>
+            <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
+            </div>
+          `;
           popup.setHTML(infoHtml);
         }
       } catch {
