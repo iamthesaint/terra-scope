@@ -11,6 +11,8 @@ import Login from "./pages/Login.tsx";
 import Signup from "./pages/SignUp.tsx";
 import Settings from "./pages/settings.tsx";
 import ProfilePage from "./pages/profilePage.tsx";
+import Save from "./components/Save.tsx";
+import { SavedLocationsProvider } from "../context/SavedLocationsContext.tsx";
 
 const router = createBrowserRouter([
 
@@ -36,14 +38,21 @@ const router = createBrowserRouter([
         element: <ProfilePage />
       },
       {
+        path: '/saved',
+        element: <Save />
+      },
+      {
         path: '/signup',
         element: <Signup />
       }
-    ]
-  }
-])
+    ]},
+]);
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);
+  ReactDOM.createRoot(rootElement).render(
+  <SavedLocationsProvider>
+  <RouterProvider router={router} />
+  </SavedLocationsProvider>
+  );
 }

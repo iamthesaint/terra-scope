@@ -17,5 +17,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "../server/src/seeds"]
+  "include": ["src", "../server/src/seeds", "context/SavedLocationsContext.tsx"]
 }
