@@ -1,11 +1,11 @@
 import express from "express";
 import type { Request, Response } from "express";
-import { User } from "../../models/index.js";
+import bcrypt from 'bcrypt'; // Ensure bcrypt is used for password hashing
+import { User } from "../../models/index.js"; // Adjust path to your models
 
 const router = express.Router();
 
-// GETTING /users
-
+// GET ALL USERS (excluding passwords)
 router.get("/", async (_req: Request, res: Response) => {
   try {
     const users = await User.findAll({
@@ -17,8 +17,7 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 });
 
-// GETTING USER BY ID
-
+// GET USER BY ID (excluding password)
 router.get("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -36,41 +35,55 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// POSTING USERS (CREATING)
-
+// CREATE A NEW USER
 router.post("/", async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
+
   try {
-    const newUser = await User.create({ username, email, password });
+    // Hash the password before storing
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ username, email, password: hashedPassword });
     res.status(201).json(newUser);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
 });
 
-// PUT (UPDATING A USER BY ID)
-
+// UPDATE USER BY ID (Username, Email, Password)
 router.put("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
     const user = await User.findByPk(id);
-    if (user) {
-      user.username = username;
-      user.password = password;
-      await user.save();
-      res.json(user);
-    } else {
-      res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Update username if provided
+    if (username) {
+      user.username = username;
+    }
+
+    // Update email if provided
+    if (email) {
+      user.email = email;
+    }
+
+    // Hash the new password if provided
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    // Save the updated user
+    await user.save();
+    res.json(user); // Return the updated user details
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
 });
 
-// DELETE (DELETE USER BY ID)
-
+// DELETE USER BY ID
 router.delete("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -78,7 +91,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     const user = await User.findByPk(id);
     if (user) {
       await user.destroy();
-      res.json({ message: "User deleted" });
+      res.json({ message: "User deleted successfully" });
     } else {
       res.status(404).json({ message: "User not found" });
     }

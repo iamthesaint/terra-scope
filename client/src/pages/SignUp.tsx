@@ -1,6 +1,6 @@
 import '../styles/signupPage.css'
 
-import Auth from '../utils/Auth.js';
+import Auth from '../utils/auth.js';
 import { useState, FormEvent, ChangeEvent } from "react";
 import { UserLogin } from '../interfaces/UserLogin';
 import { signUp } from '../api/authAPI';

@@ -1,4 +1,4 @@
-import Auth from '../utils/Auth'; // Import the authentication utility for managing tokens
+import Auth from '../utils/auth'; // Import the authentication utility for managing tokens
 
 // Function to fetch a list of users by sending a GET request to '/api/users'
 const retrieveUsers = async () => {
@@ -26,5 +26,29 @@ const retrieveUsers = async () => {
     return []; // Return an empty array if there's an error
   }
 }
+// Function to delete a user by sending a DELETE request to the back-end
+export const deleteUser = async (token: string) => {
+  try {
+    // Make an API call to the back-end route that deletes the user
+    const response = await fetch('/api/users', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json', // Specify the request format
+        Authorization: `Bearer ${token}`, // Include the token for authorization
+      },
+    });
 
-export { retrieveUsers }; // Export the function for use in other parts of the app
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error('Failed to delete user');
+    }
+
+    // Parse the JSON response from the server
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting user", error);
+    throw error;
+  }
+};
+
+export { retrieveUsers };

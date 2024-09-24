@@ -2,7 +2,7 @@ import "./header.css";
 
 import { Link } from "react-router-dom";
 import Profile from "../profile/profile.js";
-import Auth from "../../utils/Auth";
+import Auth from "../../utils/auth";
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
