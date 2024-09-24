@@ -11,7 +11,6 @@ export const getSaved = async (_req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch saved destinations" });
   }
 };
-
 export const createSaved = async (req: Request, res: Response) => {
   const { name, description, image, web_url, userId } = req.body;
   try {
