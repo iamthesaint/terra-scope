@@ -1,3 +1,2 @@
-DROP DATABASE IF EXISTS tripzen_db;
 
-CREATE DATABASE tripzen_db;
+CREATE DATABASE IF NOT EXISTS tripzen_db;

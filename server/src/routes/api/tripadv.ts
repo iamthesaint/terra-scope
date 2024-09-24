@@ -18,7 +18,6 @@ router.get("/", async (req, res) => {
 
     const searchResponse = await fetch(searchUrl, searchOptions);
     const searchData = await searchResponse.json();
-    console.log(searchData);
 
     if (!searchData.data || searchData.data.length === 0) {
       return res.status(404).json({ error: "No locations found" });
