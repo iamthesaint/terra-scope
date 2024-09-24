@@ -42,6 +42,7 @@ class AuthService {
     // remove the token from localStorage
     // redirect to the login page
     localStorage.removeItem("id_token");
+    window.location.reload();
   }
 }
 
