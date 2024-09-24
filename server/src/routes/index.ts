@@ -24,6 +24,6 @@ router.use('/tripadvisor', tripadvRouter);
 router.use('/saved', savedRouter); 
 
 // destination routes
-router.use('/api/destinations', DestinationRouter);
+router.use('/destinations', DestinationRouter);
 
 export default router;
