@@ -81,6 +81,9 @@ export default function Header() {
                 <Link to="/settings">
                   <h3 className="options">Settings</h3>
                 </Link>
+                <Link to="/saved">
+                  <h3 className="options">Saved Destinations</h3>
+                </Link>
                 <h3
                   className="logout"
                   onClick={() => {
