@@ -10,16 +10,18 @@ import axios from "axios";
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-
+  console.log(import.meta.env.VITE_MAPBOX_ACCESS_TOKEN);
+  
   (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
     import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
-
+    console.log(mapContainerRef);
+    
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/iamthesaint/cm1b4ht2q00mu01qk2npuh13w",
+      style: "mapbox://styles/mapbox/streets-v9",
       projection: "globe",
       zoom: 1.5,
       center: [-90, 40],

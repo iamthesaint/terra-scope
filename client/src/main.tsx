@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home.tsx';
 import Error from './pages/ErrorPage.tsx';
 import Login from "./pages/Login.tsx";
-// import Signup from "./pages/SignUp.tsx";
+import Signup from "./pages/SignUp.tsx";
 import Settings from "./pages/settings.tsx";
 import ProfilePage from "./pages/profilePage.tsx";
 
@@ -22,20 +22,23 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />
-      }, 
+      },
       {
-        path: 'login',
+        path: '/login',
         element: <Login />
       },
       {
-        path: 'settings',
+        path: '/settings',
         element: <Settings />
       },
       {
-        path: 'profile',
+        path: '/profile',
         element: <ProfilePage />
       },
-  
+      {
+        path: '/signup',
+        element: <Signup />
+      }
     ]
   }
 ])

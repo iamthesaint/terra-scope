@@ -1,7 +1,7 @@
 import "./header.css";
 import { Link } from "react-router-dom";
 import Profile from "../profile/profile.js";
-import Auth from "../../utils/auth.js";
+import auth from "../../utils/auth.js";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,7 +18,7 @@ export default function Header() {
   const navigate = useNavigate();
 
   const checkLogin = () => {
-    if (Auth.loggedIn()) {
+    if (auth.loggedIn()) {
       setLoginCheck(true);
     }
   };
@@ -87,7 +87,7 @@ export default function Header() {
                 <h3
                   className="logout"
                   onClick={() => {
-                    Auth.logout();
+                    auth.logout();
                     navigate("/login");
                   }}
                 >
