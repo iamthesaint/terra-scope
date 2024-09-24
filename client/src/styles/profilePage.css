@@ -31,3 +31,25 @@
 
     background-color: #079A6E;
 }
+
+.modal-header {
+
+    border: none;
+}
+
+.modal-footer {
+
+    border: none;
+}
+
+.btn {
+
+    background-color: #09BC8A;
+    color: #172A3A;
+}
+
+.btn:hover {
+
+    background-color: #079A6E !important;
+    color:#172A3A !important;
+}
