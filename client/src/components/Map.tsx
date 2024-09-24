@@ -21,7 +21,7 @@ export default function Map() {
     
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v9",
+      style: "mapbox://styles/iamthesaint/cm1b4ht2q00mu01qk2npuh13w",
       projection: "globe",
       zoom: 1.5,
       center: [-90, 40],
