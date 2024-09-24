@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home.tsx';
 import Error from './pages/ErrorPage.tsx';
 import Login from "./pages/Login.tsx";
-// import Signup from "./pages/SignUp.tsx";
+import Signup from "./pages/SignUp.tsx";
 import Settings from "./pages/settings.tsx";
 import ProfilePage from "./pages/profilePage.tsx";
 import Save from "./components/Save.tsx";
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />
-      }, 
+      },
       {
         path: '/login',
         element: <Login />
@@ -40,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: '/saved',
         element: <Save />
+      },
+      {
+        path: '/signup',
+        element: <Signup />
       }
     ]},
 ]);
