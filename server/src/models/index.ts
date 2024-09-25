@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 import { Sequelize } from "sequelize";
 import { UserFactory } from "./user.js";
-import { DestinationFactory } from "./destination.js";
 
 // db url for render deployment
 const sequelize = process.env.DATABASE_URL
@@ -30,17 +29,7 @@ const sequelize = process.env.DATABASE_URL
 
 // init models
 const User = UserFactory(sequelize);
-const Destination = DestinationFactory(sequelize);
 
-
-// create associations here for the models
-User.hasMany(Destination, {
-  foreignKey: "userId",
-  onDelete: "CASCADE",
-});
-Destination.belongsTo(User, {
-  foreignKey: "userId",
-});
 
 // sync models with database
 sequelize.sync({ alter: true })
@@ -53,4 +42,4 @@ sequelize.sync({ alter: true })
 
 // export all models
 
-export { sequelize, User, Destination };
+export { sequelize, User };
