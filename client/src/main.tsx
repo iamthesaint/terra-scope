@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import App from './App.tsx'
+import App from './App.tsx';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -15,7 +15,6 @@ import Save from "./components/Save.tsx";
 import { SavedLocationsProvider } from "../context/SavedLocationsContext.tsx";
 
 const router = createBrowserRouter([
-
   {
     path: '/',
     element: <App />,
@@ -45,14 +44,15 @@ const router = createBrowserRouter([
         path: '/signup',
         element: <Signup />
       }
-    ]},
+    ]
+  }
 ]);
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
-  <SavedLocationsProvider>
-  <RouterProvider router={router} />
-  </SavedLocationsProvider>
+    <SavedLocationsProvider>
+      <RouterProvider router={router} />
+    </SavedLocationsProvider>
   );
 }
