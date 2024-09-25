@@ -3,15 +3,11 @@ import throttle from "lodash/throttle";
 import * as mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
-
-// define the addLocation function
-  // logic to save location
 import "../styles/Map.css";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { fetchTripAdvisorData } from "../api/tripadvAPI";
 import axios from "axios";
 import { useSavedLocations } from "../../context/UseSavedLocations";
-
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -20,15 +16,15 @@ export default function Map() {
     coordinates: [number, number];
     placeName: string;
   }
-  
+
   const [, setSelectedLocation] = useState<Location | null>(null);
+  
   (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
     import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
-    console.log(mapContainerRef);
-    
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/iamthesaint/cm1b4ht2q00mu01qk2npuh13w",
@@ -37,203 +33,108 @@ export default function Map() {
       center: [-90, 40],
     });
 
-    // add the geocoder to the map
     const geocoder = new MapboxGeocoder({
-      accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
-      marker: true,
+      accessToken: (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken,
       mapboxgl: mapboxgl,
       zoom: 10,
       placeholder: "Search for any location on Earth!",
     });
 
-    // add the navigation control to the map
+    // Add controls to the map
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
-
-    // add control to the map to search for locations
     map.addControl(geocoder, "top-left");
 
-    // disable map rotation
+    // Disable map rotation
     map.dragRotate.disable();
 
-    // disable map rotation when using the geocoder
-    geocoder.on("results", () => {
-      // logic to disable map rotation
-    });
-
-    // enable map rotation when the geocoder is finished
-    geocoder.on("clear", () => {
-      // logic to enable map rotation
-    });
-
-    // listen for the result event from search
-    geocoder.on("result", (e) => {
-      const { result } = e;
-      const coordinates = result.geometry.coordinates;
-      const placeName = result.text;
-      const location: Location = {
-        coordinates,
-        placeName,
-      };
-      setSelectedLocation(location);
-    });
-    
-    // create a new popup and set its coordinates and text
-    const popup = new mapboxgl.Popup({ offset: 25, closeOnClick: false });
-
-    // add a marker to the map
-    const marker = new mapboxgl.Marker();
-
-    // listen for the result event from search
+    // Handle results from geocoder
     geocoder.on("result", async (e) => {
       const { result } = e;
       const coordinates = result.geometry.coordinates;
       const placeName = result.text;
-      const location: Location = {
-        coordinates,
-        placeName,
-      };
+      const location: Location = { coordinates, placeName };
       setSelectedLocation(location);
 
-      popup.setLngLat(coordinates).setHTML(`<p>Loading...</p>`).addTo(map);
-      marker.setLngLat(coordinates).addTo(map);
+      // Create popup and marker
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setLngLat(coordinates)
+        .setHTML(`<p>Loading...</p>`)
+        .addTo(map);
 
-      // attach event listener to the marker to reopen the popup
-      marker.getElement().addEventListener("click", () => {
-        popup.addTo(map);
-      });
+      new mapboxgl.Marker()
+        .setLngLat(coordinates)
+        .addTo(map);
 
-      // fetch weather data from openweathermap api
-      const fetchWeather = async (lat: number, lon: number) => {
-        const apiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
-        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`; // units=imperial for fahrenheit
-
-        try {
-          const response = await axios.get(weatherUrl);
-          if (response.status === 200) {
-            const { main, weather } = response.data;
-            return {
-              temp: Math.round(main.temp), // temp in °F to nearest whole number
-              description: weather[0].description,
-            };
-          } else {
-            console.error(
-              `Weather API responded with status: ${response.status}`
-            );
-            return {
-              temp: "--°F",
-              description: "Weather data unavailable",
-            };
-          }
-        } catch (error) {
-          console.error("Error fetching weather data:", error);
-          return {
-            temp: "--°F",
-            description: "Weather data unavailable",
-          };
-        }
-      };
-
-      // fetch data from tripadvisor api
+      // Fetch data from TripAdvisor API
       try {
-        const tripAdvisorData = await fetchTripAdvisorData(placeName);
+        const tripAdvisorData = await fetchTripAdvisorData(result.id); // Use location ID for fetching data
         if (tripAdvisorData) {
           const infoHtml = `
             <div style="text-align: center;">
-            <h3>${tripAdvisorData.name}</h3>
-            <p>${tripAdvisorData.description}</p>
-            <img src="${tripAdvisorData.image}" alt="${
-            tripAdvisorData.name
-          }" style="width:100%; height:auto;"/>
-            <a href="${tripAdvisorData.web_url}" target="_blank">Learn more</a>
-            <p>Current Weather: ${await fetchWeather(
-              coordinates[1],
-              coordinates[0]
-            ).then(
-              (weather) => `${weather.temp}°F, ${weather.description}`
-            )}</p>
-            <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
+              <h3>${tripAdvisorData.name}</h3>
+              <p>${tripAdvisorData.description || "No description available."}</p>
+              <img src="${tripAdvisorData.image}" alt="${tripAdvisorData.name}" style="width:100%; height:auto;"/>
+              <a href="${tripAdvisorData.web_url}" target="_blank">Learn more</a>
+              <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
             </div>
           `;
           popup.setHTML(infoHtml);
 
-          // add event listener to save destination button
-          document.getElementById("save-destination")?.addEventListener("click", () => {
-            console.log("Saving destination:", tripAdvisorData);
-            // save destination to user's Saved Destinations with name, description, image, and web_url
+          // Add event listener for saving destination
+          document.getElementById("save-destination")?.addEventListener("click", async () => {
             const newLocation = {
               name: tripAdvisorData.name,
-              description: tripAdvisorData.description,
+              description: tripAdvisorData.description || "No description available.",
               image: tripAdvisorData.image,
-              web_url: tripAdvisorData.web_url
+              web_url: tripAdvisorData.web_url,
             };
-            addLocation(newLocation);
-            console.log(newLocation);
-            alert("Destination saved!");
-          });
 
-          // move map to the marker when it's added
-          map.flyTo({
-            center: coordinates,
-            zoom: 10,
-            essential: true, // this animation is considered essential with respect to prefers-reduced-motion!
+            try {
+              await axios.post('/api/saved', newLocation); // Save to backend
+              addLocation(newLocation); // Update context
+              alert("Destination saved!");
+            } catch (error) {
+              console.error("Error saving location:", error);
+              alert("Failed to save destination");
+            }
           });
         }
       } catch (error) {
         console.error("Error fetching TripAdvisor data:", error);
-        popup.setHTML(`<p>Unable to load data for ${placeName}</p>`);
+        popup.setHTML(`<p>Failed to load data for ${placeName}</p>`);
       }
+
+      // Move map to the marker
+      map.flyTo({
+        center: coordinates,
+        zoom: 10,
+        essential: true,
+      });
     });
 
-
-
+    // Add spin functionality
     let userInteracting = false;
-    const spinEnabled = true;
-    const secondsPerRevolution = 130;
-    const maxSpinZoom = 4;
-    const slowSpinZoom = 2;
-
     const spinGlobe = throttle(() => {
       const zoom = map.getZoom();
-      if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-        let distancePerSecond = 340 / secondsPerRevolution;
-        if (zoom > slowSpinZoom) {
-          const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-          distancePerSecond *= zoomDif;
-        }
+      if (!userInteracting && zoom < 4) {
+        const distancePerSecond = 340 / 130;
         const center = map.getCenter();
         center.lng -= distancePerSecond;
         map.easeTo({ center, duration: 1000, easing: (n) => n });
       }
     }, 100);
 
-    map.on("mousedown", () => {
-      userInteracting = true;
-    });
-    map.on("mouseup", () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-    map.on("dragend", () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-    map.on("pitchend", () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-    map.on("rotateend", () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-    map.on("moveend", () => {
-      spinGlobe();
-    });
-
-    spinGlobe();
+    // Event listeners for user interaction
+    map.on("mousedown", () => { userInteracting = true; });
+    map.on("mouseup", () => { userInteracting = false; spinGlobe(); });
+    map.on("dragend", () => { userInteracting = false; spinGlobe(); });
+    map.on("pitchend", () => { userInteracting = false; spinGlobe(); });
+    map.on("rotateend", () => { userInteracting = false; spinGlobe(); });
+    map.on("moveend", spinGlobe);
 
     return () => {
       map.remove();
-    }
+    };
   }, [addLocation]);
 
   return (

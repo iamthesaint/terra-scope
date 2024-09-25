@@ -16,7 +16,6 @@ import { sequelize } from './models/index.js';
 
 console.log("TripAdvisor API key:", process.env.TRIPADVISOR_API_KEY);
 
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 

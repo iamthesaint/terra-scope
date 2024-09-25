@@ -24,6 +24,7 @@ export const SavedLocationsProvider = ({ children }: { children: ReactNode }) =>
     const fetchSavedLocations = async () => {
       try {
         const response = await axios.get('/api/saved');
+        console.log('Fetched saved locations:', response.data); // Log the response data
         setSavedLocations(response.data);
       } catch (error) {
         console.error("Error fetching saved locations:", error);
