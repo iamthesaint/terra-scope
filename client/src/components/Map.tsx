@@ -90,14 +90,20 @@ export default function Map() {
             };
 
             try {
-              await axios.post('/api/saved', newLocation); // Save to backend
-              addLocation(newLocation); // Update context
+              await axios.post('/api/saved', newLocation); 
+              const completeLocation = {
+                ...newLocation,
+                id: Date.now(), // or any unique identifier
+                removeLocation: () => {} // or any appropriate function
+              };
+              addLocation(completeLocation);
               alert("Destination saved!");
             } catch (error) {
               console.error("Error saving location:", error);
               alert("Failed to save destination");
             }
           });
+
         }
       } catch (error) {
         console.error("Error fetching TripAdvisor data:", error);

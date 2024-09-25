@@ -36,9 +36,23 @@ router.post('/', async (req: Request, res: Response) => {
     console.error("Error creating saved location:", error);
     return res.status(500).json({ error: "Error creating saved location" });
   }
-}
-  
-  );
+});
+
+// DELETE /api/saved/:id - remove a saved location
+router.delete('/:id', async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  try {
+    const deletedLocation = await SavedLocation.destroy({ where: { id } });
+    if (!deletedLocation) {
+      return res.status(404).json({ error: "Location not found" });
+    }
+    return res.status(204).send(); 
+  } catch (error) {
+    console.error("Error deleting location:", error);
+    return res.status(500).json({ error: "Error deleting location" });
+  }
+});
 
 
 export default router;

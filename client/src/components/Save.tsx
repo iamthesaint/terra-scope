@@ -1,8 +1,9 @@
 // save component to display saved locations in a table format
-import '../styles/Save.css';
-import useSavedLocations  from '../../context/UseSavedLocations';
+import "../styles/Save.css";
+import useSavedLocations from "../../context/UseSavedLocations";
 
 interface Destination {
+  id: number;
   image: string;
   name: string;
   description: string;
@@ -10,18 +11,19 @@ interface Destination {
 }
 
 const Save = () => {
-  const { savedLocations } = useSavedLocations();
+  const { savedLocations, removeLocation } = useSavedLocations();
 
   return (
     <div>
       <h1>My Saved Destinations</h1>
-      <table>
+      <table className="table">
         <thead>
           <tr>
             <th>Name</th>
             <th>Description</th>
             <th>Image</th>
             <th>Link</th>
+            <th>Remove</th>
           </tr>
         </thead>
         <tbody>
@@ -34,8 +36,16 @@ const Save = () => {
               </td>
               <td>
                 <a href={location.web_url} target="_blank" rel="noreferrer">
-                  {location.web_url}
+                  Click For Destination Info
                 </a>
+              </td>
+              <td>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => removeLocation(location.id)}
+                >
+                  Remove
+                </button>
               </td>
             </tr>
           ))}
@@ -43,6 +53,6 @@ const Save = () => {
       </table>
     </div>
   );
-}
+};
 
 export default Save;
