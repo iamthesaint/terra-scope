@@ -9,9 +9,9 @@ import Home from './pages/Home.tsx';
 import Error from './pages/ErrorPage.tsx';
 import Login from "./pages/Login.tsx";
 import Signup from "./pages/SignUp.tsx";
-import Settings from "./pages/Settings.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import Save from "./components/Save.tsx";
+import Settings from "./pages/Settings.tsx";
 import { SavedLocationsProvider } from "../context/SavedLocationsContext.tsx";
 
 const router = createBrowserRouter([

@@ -1,5 +1,5 @@
 import ProfilePic from "../components/profilePic/profilePic";
-import '../styles/profilePage.css'
+import '../styles/ProfilePage.css'
 const ProfilePage = () => {
 
   return (
