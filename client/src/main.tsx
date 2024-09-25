@@ -8,6 +8,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home.tsx';
 import Error from './pages/ErrorPage.tsx';
 import Login from "./pages/Login.tsx";
+import Settings from "./pages/settings.tsx";
+import ProfilePage from "./pages/profilePage.tsx";
+import Signup from "./pages/signUp.tsx";
+import Save from "./components/Save.tsx";
 import { SavedLocationsProvider } from "../context/SavedLocationsContext.tsx";
 
 const router = createBrowserRouter([

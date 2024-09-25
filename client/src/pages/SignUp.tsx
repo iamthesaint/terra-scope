@@ -2,8 +2,8 @@ import '../styles/signupPage.css'
 
 import auth from '../utils/auth.js';
 import { useState, FormEvent, ChangeEvent } from "react";
-import { UserLogin } from '../interfaces/UserLogin';
-import { signUp } from '../api/authAPI';
+import { UserLogin } from '../interfaces/UserLogin.js';
+import { signUp } from '../api/authAPI.js';
 const Signup = () => {
     const [signUpData, setSignUpData] = useState<UserLogin>({
         username: '',
