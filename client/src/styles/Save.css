@@ -34,8 +34,8 @@
   }
   
   img {
-    width: 50px; /* Adjust the size of the images */
+    width: 50px;
     height: auto;
-    border-radius: 5px; /* Optional: Adds rounded corners */
+    border-radius: 5px; 
   }
   
