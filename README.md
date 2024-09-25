@@ -18,7 +18,13 @@ An engaging and visually stunning app designed to assist users in discovering an
 There are no installation instructions at this time, visiting the URL provided in the repository is all that is needed as this is a full-stack deployed application.
 
 ## Usage
-In order to use this app, you must log in on the top right, or make an account, then visit the home screen and search up a city. It will show you a short bio and then you can add it to the saved destinations which can be accessed on the sidebar.
+TZ login is located on the top righthand side of the screen (if you do not already have an account, signup is available). The home screen provides a searchbar and an interactive map. Upon search, TZ will show you a short bio, including a quick blurb about what the destination is known for, the current weather and weather description, a link for travel-info (reviews, photos, nearby points of interest, flights), and also an option to Save the destination to your list, which can be accessed via the sidebar.
+
+<img width="2035" alt="tripzen-home" src="https://github.com/user-attachments/assets/cfc866bc-5e17-4bf7-989d-eed8a64d9cbc">
+
+<img width="1409" alt="tripzen-login" src="https://github.com/user-attachments/assets/73790b65-74c0-443d-81c3-31c0707b0002">
+
+[TripZen walkthrough](https://youtu.be/yEcrkbRSErE)
 
 ## License
 This project is licensed under the [MIT](https://opensource.org/licenses/MIT) license.
