@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import { Sequelize } from "sequelize";
 import { UserFactory } from "./user.js";
+import { SavedLocationFactory } from "./saved-location.js";
 
 // db url for render deployment
 const sequelize = process.env.DATABASE_URL
@@ -29,7 +30,7 @@ const sequelize = process.env.DATABASE_URL
 
 // init models
 const User = UserFactory(sequelize);
-
+const SavedLocation = SavedLocationFactory(sequelize);
 
 // sync models with database
 sequelize.sync({ alter: true })
@@ -42,4 +43,4 @@ sequelize.sync({ alter: true })
 
 // export all models
 
-export { sequelize, User };
+export { sequelize, User, SavedLocation };

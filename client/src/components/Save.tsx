@@ -1,6 +1,6 @@
 // save component to display saved locations in a table format
 import '../styles/Save.css';
-import { useSavedLocations } from '../../context/UseSavedLocations';
+import useSavedLocations  from '../../context/UseSavedLocations';
 
 interface Destination {
   image: string;

@@ -1,5 +1,3 @@
-// provides a context for saved locations to manage state across the app
-
 import { createContext, ReactNode, useEffect, useState } from "react";
 import axios from "axios";
 
@@ -24,7 +22,6 @@ export const SavedLocationsProvider = ({ children }: { children: ReactNode }) =>
     const fetchSavedLocations = async () => {
       try {
         const response = await axios.get('/api/saved');
-        console.log('Fetched saved locations:', response.data); // Log the response data
         setSavedLocations(response.data);
       } catch (error) {
         console.error("Error fetching saved locations:", error);
@@ -44,5 +41,3 @@ export const SavedLocationsProvider = ({ children }: { children: ReactNode }) =>
     </SavedLocationsContext.Provider>
   );
 }
-
-export default SavedLocationsProvider;

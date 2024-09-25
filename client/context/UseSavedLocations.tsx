@@ -3,12 +3,14 @@
 import { useContext } from "react";
 import { SavedLocationsContext } from "./SavedLocationsContext";
 
-export const useSavedLocations = () => {
+const useSavedLocations = () => {
   const context = useContext(SavedLocationsContext);
 
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useSavedLocations must be used within a SavedLocationsProvider");
   }
 
   return context;
 };
+
+export default useSavedLocations;

@@ -7,7 +7,7 @@ import "../styles/Map.css";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { fetchTripAdvisorData } from "../api/tripadvAPI";
 import axios from "axios";
-import { useSavedLocations } from "../../context/UseSavedLocations";
+import useSavedLocations from "../../context/UseSavedLocations";
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ export default function Map() {
 
       // Fetch data from TripAdvisor API
       try {
-        const tripAdvisorData = await fetchTripAdvisorData(result.id); // Use location ID for fetching data
+        const tripAdvisorData = await fetchTripAdvisorData(placeName); // Use location ID for fetching data
         if (tripAdvisorData) {
           const infoHtml = `
             <div style="text-align: center;">
