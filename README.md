@@ -30,4 +30,4 @@ Contributions are welcome! If you have suggestions for improvements or new featu
 There are no test instructions as of September 11th, 2024. This is subject to change as development can be further continued.
 
 ## Questions
-If you have any questions, you can reach us at [bryceberczik.dev@gmail.com](mailto:bryceberczik.dev@gmail.com), [rolandos_email](mailto:rolando@email.com), [stephenie_email](mailto:stephenie2@me.com)  You can also find more of our work at [bryceberczik](https://github.com/bryceberczik), [iamthesaint](https://github.com/iamthesaint), [Rolando1107](https://github.com/Rolando1107) on Github.
+If you have any questions, you can reach us at [bryceberczik.dev@gmail.com](mailto:bryceberczik.dev@gmail.com), [rolandos_email](mailto:rolando@email.com), [stephenie2@me.com](mailto:stephenie2@me.com)  You can also find more of our work at [bryceberczik](https://github.com/bryceberczik), [iamthesaint](https://github.com/iamthesaint), [Rolando1107](https://github.com/Rolando1107) on Github.
