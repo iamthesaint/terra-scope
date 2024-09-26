@@ -1,7 +1,7 @@
 export const fetchTripAdvisorData = async (locationId: string) => {
   console.log("Fetching TripAdvisor data for location ID:", locationId);
   try {
-    const apiKey = process.env.TRIPADVISOR_API_KEY;
+    const apiKey = process.env.VITE_TRIPADVISOR_API_KEY;
     if (!apiKey) {
       throw new Error('TripAdvisor API key is missing');
     }
