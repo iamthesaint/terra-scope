@@ -2,7 +2,7 @@ export const fetchTripAdvisorData = async (query: string) => {
   console.log("Fetching TripAdvisor data for:", query);
   try {
     const response = await fetch(`/tripadv?query=${encodeURIComponent(query)}`);
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch TripAdvisor data');
     }
