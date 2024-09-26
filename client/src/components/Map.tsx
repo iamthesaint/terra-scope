@@ -67,7 +67,8 @@ export default function Map() {
 
       // Fetch data from TripAdvisor API
       try {
-        const tripAdvisorData = await fetchTripAdvisorData(placeName); // Use location ID for fetching data
+        const tripAdvisorData = await fetchTripAdvisorData(result.text);
+        console.log("TripAdvisor data:", tripAdvisorData);
         if (tripAdvisorData) {
           const infoHtml = `
             <div style="text-align: center;">
