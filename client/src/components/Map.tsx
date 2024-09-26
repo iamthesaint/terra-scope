@@ -8,6 +8,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { fetchTripAdvisorData } from "../api/tripadvAPI";
 import axios from "axios";
 import useSavedLocations from "../../context/UseSavedLocations";
+console.log(import.meta.env.VITE_TRIPADVISOR_API_KEY);
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);

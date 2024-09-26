@@ -1,7 +1,18 @@
-export const fetchTripAdvisorData = async (query: string) => {
-  console.log("Fetching TripAdvisor data for:", query);
+export const fetchTripAdvisorData = async (locationId: string) => {
+  console.log("Fetching TripAdvisor data for location ID:", locationId);
   try {
-    const response = await fetch(`/tripadv?query=${encodeURIComponent(query)}`);
+    const apiKey = process.env.TRIPADVISOR_API_KEY;
+    if (!apiKey) {
+      throw new Error('TripAdvisor API key is missing');
+    }
+
+    const response = await fetch(`https://api.content.tripadvisor.com/api/v1/location/${locationId}/details`, {
+      method: "GET",
+      headers: {
+        "accept": "application/json",
+        "X-TripAdvisor-API-Key": apiKey,
+      }
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch TripAdvisor data');
@@ -9,14 +20,11 @@ export const fetchTripAdvisorData = async (query: string) => {
 
     const data = await response.json();
 
-    // destruct the details and photos from the response
-    const { details, photos } = data;
-
     const destination = {
-      name: details.name || query,
-      description: details.description || "No description available for this location",
-      web_url: details.web_url || "#",
-      image: photos[0]?.imageUrl || "No photo available for this location",
+      name: data.name || "No name available",
+      description: data.description || "No description available for this location",
+      web_url: data.web_url || "#",
+      image: data.photo?.images?.large?.url || "No photo available for this location",
     };
 
     return destination;
@@ -25,5 +33,3 @@ export const fetchTripAdvisorData = async (query: string) => {
     return null;
   }
 };
-
-
