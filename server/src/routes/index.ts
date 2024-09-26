@@ -17,7 +17,7 @@ router.use('/users', authenticateToken, userRouter);
 router.use('/api', apiRouter);
 
 // tripadvisor routes
-router.use('/tripadvisor', tripadvRouter);
+router.use('/tripadv', tripadvRouter);
 
 router.use('/saved', savedRoutes);
 

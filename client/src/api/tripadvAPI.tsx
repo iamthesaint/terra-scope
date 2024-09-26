@@ -1,24 +1,29 @@
- import axios from "axios";
+export const fetchTripAdvisorData = async (query: string) => {
+  console.log("Fetching TripAdvisor data for:", query);
+  try {
+    const response = await fetch(`/tripadv?query=${encodeURIComponent(query)}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch TripAdvisor data');
+    }
 
-      export async function fetchTripAdvisorData(placeName: string) {
-        try {
-          const response = await axios.get(`http://localhost:3001/tripadvisor`, {
-            params: { query: placeName },
-          });
+    const data = await response.json();
 
-          const { details, photos } = response.data;
+    // destruct the details and photos from the response
+    const { details, photos } = data;
 
-          // geos/city/town/village details
-          const destination = {
-            name: details.name || placeName,
-            description: details.description || "No description available for this location",
-            web_url: details.web_url,
-            image: photos[0]?.imageUrl || "No photo available for this location",
-          };
+    const destination = {
+      name: details.name || query,
+      description: details.description || "No description available for this location",
+      web_url: details.web_url || "#",
+      image: photos[0]?.imageUrl || "No photo available for this location",
+    };
 
-          return destination;
-        } catch (error) {
-          console.error("Error fetching data from TripAdvisor:", error);
-          return null;
-        }
-      }
+    return destination;
+  } catch (error) {
+    console.error("Error fetching data from TripAdvisor:", error);
+    return null;
+  }
+};
+
+
