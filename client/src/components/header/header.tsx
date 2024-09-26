@@ -41,13 +41,10 @@ export default function Header() {
     }
   };
 
-    
-
   return (
     <div>
       <header>
         <h1 className="brand">TripZen</h1>
-
         {!loginCheck ? (
           <Link to="/login" className="login">
             <h3 className="login">Log In</h3>
