@@ -20,10 +20,9 @@ const PORT = process.env.PORT || 3001;
 
 // CORS configuration
 const corsOptions = {
-  origin: 'https://trip-zen.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   allowedHeaders: ['Content-Type', 'Authorization'], 
-  credentials: true, 
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
