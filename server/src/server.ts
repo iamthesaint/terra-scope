@@ -18,14 +18,8 @@ import { sequelize } from './models/index.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration
-const corsOptions = {
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'], 
-  credentials: true,
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 
 app.use(express.json());

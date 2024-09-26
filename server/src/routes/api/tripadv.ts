@@ -1,5 +1,7 @@
 import express from "express";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
 
@@ -34,7 +36,7 @@ router.get("/", async (req, res) => {
     const locationId = searchData.data[0].location_id;
 
     // Endpoint TWO: Use loc ID to get information for popup
-    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/details?language=en&currency=USD&key=${process.env.TRIPADVISOR_API_KEY}`;
+    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/search?key=${process.env.TRIPADVISOR_API_KEY}&searchQuery=${locationId}&category=geos&language=en`;
     const detailsResponse = await fetch(detailsUrl, {
       method: "GET",
       headers: { accept: "application/json" },
