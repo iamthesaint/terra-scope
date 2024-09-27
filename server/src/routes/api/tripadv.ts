@@ -5,11 +5,11 @@ dotenv.config();
 
 const router = express.Router();
 
-// Search for a location and fetch details
+// search for a location and fetch details
 router.get("/", async (req, res) => {
   const query = req.query.query as string; // Ensure query is a string
 
-  // Validate the query parameter
+  // val the query parameter
   if (!query) {
     return res.status(400).json({ error: "Query parameter is required" });
   }
@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
     const searchResponse = await fetch(searchUrl, searchOptions);
     const searchData = await searchResponse.json();
 
-    // Log the search response for debugging
+    // log the search response for debugging
     console.log("Search Data from TripAdvisor:", searchData);
 
     if (!searchData.data || searchData.data.length === 0) {
@@ -35,12 +35,17 @@ router.get("/", async (req, res) => {
 
     const locationId = searchData.data[0].location_id;
 
-    // Endpoint TWO: Use loc ID to get information for popup
-    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/search?key=${process.env.TRIPADVISOR_API_KEY}&searchQuery=${locationId}&category=geos&language=en`;
+    // Endpoint TWO: Use loc ID to get information for the location
+    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/details?language=en&currency=USD&key=${process.env.TRIPADVISOR_API_KEY}`;
     const detailsResponse = await fetch(detailsUrl, {
       method: "GET",
       headers: { accept: "application/json" },
     });
+
+    if (!detailsResponse.ok) {
+      return res.status(detailsResponse.status).json({ error: "Failed to fetch location details" });
+    }
+    
     const detailsData = await detailsResponse.json();
 
     // Endpoint THREE: Fetch location photos using the location ID
@@ -49,23 +54,28 @@ router.get("/", async (req, res) => {
       method: "GET",
       headers: { accept: "application/json" },
     });
+
+    if (!photosResponse.ok) {
+      return res.status(photosResponse.status).json({ error: "Failed to fetch location photos" });
+    }
+    
     const photosData = await photosResponse.json();
 
-    // Extract relevant data from the responses
+    // extract the relevant data 
     const destinationDetails = {
       name: detailsData.name,
       description: detailsData.description || "No description available",
       web_url: detailsData.web_url || "",
     };
 
-    // Photo handling
+    // photo handling
     const photos = photosData.data ? photosData.data.map((photo: any) => ({
       id: photo.id,
       imageUrl: photo.images.large?.url || "No image available",
       caption: photo.caption || "No caption",
     })) : [];
 
-    // Return the detailed information and photos to display in the popup
+    // return the detailed information and photos to display in the popup
     return res.json({
       details: destinationDetails,
       photos,
