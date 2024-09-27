@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import cors from 'cors';
 
 const forceDatabaseRefresh = false;
 
@@ -17,15 +16,6 @@ import { sequelize } from './models/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
-
-app.use(cors(corsOptions));
 
 
 app.use(express.json());
