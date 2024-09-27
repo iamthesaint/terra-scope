@@ -19,7 +19,7 @@ export default function Map() {
   }
 
   const [, setSelectedLocation] = useState<Location | null>(null);
-  
+
   (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
     import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -35,7 +35,8 @@ export default function Map() {
     });
 
     const geocoder = new MapboxGeocoder({
-      accessToken: (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken,
+      accessToken: (mapboxgl as typeof mapboxgl & { accessToken: string })
+        .accessToken,
       mapboxgl: mapboxgl,
       zoom: 10,
       placeholder: "Search for any location on Earth!",
@@ -62,50 +63,53 @@ export default function Map() {
         .setHTML(`<p>Loading...</p>`)
         .addTo(map);
 
-      new mapboxgl.Marker()
-        .setLngLat(coordinates)
-        .addTo(map);
+      new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
       // Fetch data from TripAdvisor API
+      // Fetch data from TripAdvisor API
       try {
-        const tripAdvisorData = await fetchTripAdvisorData(placeName);
+        const tripAdvisorData = await fetchTripAdvisorData(placeName); // Fetching data
         console.log("TripAdvisor data:", tripAdvisorData);
+
         if (tripAdvisorData) {
+          const { details, photos } = tripAdvisorData; // Destructure details and photos from response
+
           const infoHtml = `
-            <div style="text-align: center;">
-              <h3>${tripAdvisorData.name}</h3>
-              <p>${tripAdvisorData.description || "No description available."}</p>
-              <img src="${tripAdvisorData.image}" alt="${tripAdvisorData.name}" style="width:100%; height:auto;"/>
-              <a href="${tripAdvisorData.web_url}" target="_blank">Learn more</a>
-              <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
-            </div>
-          `;
+      <div style="text-align: center;">
+        <h3>${details.name}</h3>
+        <p>${details.description || "No description available."}</p>
+        <img src="${photos[0]?.imageUrl || "No image available"}" alt="${details.name}" style="width:100%; height:auto;"/>
+        <a href="${details.web_url}" target="_blank">Learn more</a>
+        <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
+      </div>
+    `;
           popup.setHTML(infoHtml);
 
-          // Add event listener for saving destination
-          document.getElementById("save-destination")?.addEventListener("click", async () => {
-            const newLocation = {
-              name: tripAdvisorData.name,
-              description: tripAdvisorData.description || "No description available.",
-              image: tripAdvisorData.image,
-              web_url: tripAdvisorData.web_url,
-            };
-
-            try {
-              await axios.post('/api/saved', newLocation); 
-              const completeLocation = {
-                ...newLocation,
-                id: Date.now(), // or any unique identifier
-                removeLocation: () => {} // or any appropriate function
+          // add event listener for saving destination
+          document
+            .getElementById("save-destination")
+            ?.addEventListener("click", async () => {
+              const newLocation = {
+                name: details.name,
+                description: details.description || "No description available.",
+                image: photos[0]?.imageUrl || "No image available", // use the first photo or a fallback
+                web_url: details.web_url,
               };
-              addLocation(completeLocation);
-              alert("Destination saved!");
-            } catch (error) {
-              console.error("Error saving location:", error);
-              alert("Failed to save destination");
-            }
-          });
 
+              try {
+                await axios.post("/api/saved", newLocation);
+                const completeLocation = {
+                  ...newLocation,
+                  id: Date.now(),
+                  removeLocation: () => {},
+                };
+                addLocation(completeLocation);
+                alert("Destination saved!");
+              } catch (error) {
+                console.error("Error saving location:", error);
+                alert("Failed to save destination");
+              }
+            });
         }
       } catch (error) {
         console.error("Error fetching TripAdvisor data:", error);
@@ -133,11 +137,25 @@ export default function Map() {
     }, 100);
 
     // Event listeners for user interaction
-    map.on("mousedown", () => { userInteracting = true; });
-    map.on("mouseup", () => { userInteracting = false; spinGlobe(); });
-    map.on("dragend", () => { userInteracting = false; spinGlobe(); });
-    map.on("pitchend", () => { userInteracting = false; spinGlobe(); });
-    map.on("rotateend", () => { userInteracting = false; spinGlobe(); });
+    map.on("mousedown", () => {
+      userInteracting = true;
+    });
+    map.on("mouseup", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
+    map.on("dragend", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
+    map.on("pitchend", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
+    map.on("rotateend", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
     map.on("moveend", spinGlobe);
 
     return () => {
