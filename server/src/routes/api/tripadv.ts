@@ -5,11 +5,10 @@ dotenv.config();
 
 const router = express.Router();
 
-// search for a location and fetch details
+// Search for a location and fetch details
 router.get("/", async (req, res) => {
-  const query = req.query.query as string; // Ensure query is a string
+  const query = req.query.query as string; 
 
-  // val the query parameter
   if (!query) {
     return res.status(400).json({ error: "Query parameter is required" });
   }
@@ -17,17 +16,18 @@ router.get("/", async (req, res) => {
   try {
     // Endpoint ONE: Search the location by name
     const searchUrl = `https://api.content.tripadvisor.com/api/v1/location/search?key=${process.env.TRIPADVISOR_API_KEY}&searchQuery=${encodeURIComponent(query)}&category=geos&language=en`;
-
+    console.log("Search URL:", searchUrl);
+    
     const searchOptions = {
       method: "GET",
       headers: { accept: "application/json" },
     };
-
+    
     const searchResponse = await fetch(searchUrl, searchOptions);
+    console.log("Search Response Status:", searchResponse.status);
+    
     const searchData = await searchResponse.json();
-
-    // log the search response for debugging
-    console.log("Search Data from TripAdvisor:", searchData);
+    console.log("Search Data from TA:", searchData);
 
     if (!searchData.data || searchData.data.length === 0) {
       return res.status(404).json({ error: "No locations found" });
@@ -37,31 +37,36 @@ router.get("/", async (req, res) => {
 
     // Endpoint TWO: Use loc ID to get information for the location
     const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/details?language=en&currency=USD&key=${process.env.TRIPADVISOR_API_KEY}`;
+    console.log("Details URL:", detailsUrl);
+    
     const detailsResponse = await fetch(detailsUrl, {
       method: "GET",
       headers: { accept: "application/json" },
     });
 
     if (!detailsResponse.ok) {
+      console.error("Details Response Error:", detailsResponse.statusText);
       return res.status(detailsResponse.status).json({ error: "Failed to fetch location details" });
     }
-    
+
     const detailsData = await detailsResponse.json();
 
     // Endpoint THREE: Fetch location photos using the location ID
     const photosUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?key=${process.env.TRIPADVISOR_API_KEY}`;
+    console.log("Photos URL:", photosUrl);
+    
     const photosResponse = await fetch(photosUrl, {
       method: "GET",
       headers: { accept: "application/json" },
     });
 
     if (!photosResponse.ok) {
+      console.error("Photos Response Error:", photosResponse.statusText);
       return res.status(photosResponse.status).json({ error: "Failed to fetch location photos" });
     }
-    
+
     const photosData = await photosResponse.json();
 
-    // extract the relevant data 
     const destinationDetails = {
       name: detailsData.name,
       description: detailsData.description || "No description available",
@@ -75,7 +80,6 @@ router.get("/", async (req, res) => {
       caption: photo.caption || "No caption",
     })) : [];
 
-    // return the detailed information and photos to display in the popup
     return res.json({
       details: destinationDetails,
       photos,
