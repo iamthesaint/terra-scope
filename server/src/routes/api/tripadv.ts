@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
     const searchOptions = {
       method: "GET",
       headers: { 
-        referer: "www.trip-zen.com",
+        // referer: "www.trip-zen.com",
         accept: "application/json" },
     };
     
@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
     const detailsResponse = await fetch(detailsUrl, {
       method: "GET",
       headers: { 
-        referer: "www.trip-zen.com",
+        // referer: "www.trip-zen.com",
         accept: "application/json" },
     });
 
@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
     const photosResponse = await fetch(photosUrl, {
       method: "GET",
       headers: {
-        referer: "www.trip-zen.com",
+        // referer: "www.trip-zen.com",
         accept: "application/json" },
     });
 
