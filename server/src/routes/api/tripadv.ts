@@ -1,11 +1,12 @@
 import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const router = express.Router();
 
-// Search for a location and fetch details
+// search for a location and fetch details
 router.get("/", async (req, res) => {
   const query = req.query.query as string; 
 
@@ -14,8 +15,10 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    // Endpoint ONE: Search the location by name
-    const searchUrl = `https://api.content.tripadvisor.com/api/v1/location/search?key=${process.env.TRIPADVISOR_API_KEY}&searchQuery=${encodeURIComponent(query)}&category=geos&language=en`;
+    const key = process.env.TRIPADVISOR_API_KEY;
+
+    // Endpoint ONE: search the location by name
+    const searchUrl = `https://api.content.tripadvisor.com/api/v1/location/search?key=${key}&searchQuery=${encodeURIComponent(query)}&category=geos&language=en`;
     console.log("Search URL:", searchUrl);
     
     const searchOptions = {
@@ -36,7 +39,7 @@ router.get("/", async (req, res) => {
     const locationId = searchData.data[0].location_id;
 
     // Endpoint TWO: Use loc ID to get information for the location
-    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/details?language=en&currency=USD&key=${process.env.TRIPADVISOR_API_KEY}`;
+    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/details?language=en&currency=USD&key=${key}`;
     console.log("Details URL:", detailsUrl);
     
     const detailsResponse = await fetch(detailsUrl, {
@@ -51,8 +54,8 @@ router.get("/", async (req, res) => {
 
     const detailsData = await detailsResponse.json();
 
-    // Endpoint THREE: Fetch location photos using the location ID
-    const photosUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?key=${process.env.TRIPADVISOR_API_KEY}`;
+    // Endpoint THREE: fetch location photos using the location ID
+    const photosUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?key=${key}`;
     console.log("Photos URL:", photosUrl);
     
     const photosResponse = await fetch(photosUrl, {
