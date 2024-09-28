@@ -66,7 +66,6 @@ export default function Map() {
       new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
       // Fetch data from TripAdvisor API
-      // Fetch data from TripAdvisor API
       try {
         const tripAdvisorData = await fetchTripAdvisorData(placeName); // Fetching data
         console.log("TripAdvisor data:", tripAdvisorData);

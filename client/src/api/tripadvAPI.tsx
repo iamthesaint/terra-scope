@@ -6,5 +6,6 @@ export const fetchTripAdvisorData = async (query: string) => {
   }
   
   const data = await response.json();
+  console.log("TripAdvisor data:", data);
   return data;
 };
