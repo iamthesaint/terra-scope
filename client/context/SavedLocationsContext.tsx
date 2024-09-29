@@ -6,7 +6,6 @@ interface Destination {
   name: string;
   description: string;
   image: string;
-  web_url: string;
   removeLocation: (id: number) => void;
 }
 

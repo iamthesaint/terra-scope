@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import authRouter from './auth-routes.js';
 import apiRouter from './api/index.js';
-import tripadvRouter from './api/tripadv.js';
+import wikiRouter from './api/wiki.js';
 import userRouter from './api/index.js';
 import savedRoutes from '../routes/saved.js';
 
@@ -16,8 +16,8 @@ router.use('/users', authenticateToken, userRouter);
 
 router.use('/api', apiRouter);
 
-// tripadvisor routes
-router.use('/tripadv', tripadvRouter);
+// wiki routes
+router.use('/wiki', wikiRouter);
 
 router.use('/saved', savedRoutes);
 

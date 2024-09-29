@@ -5,20 +5,26 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import "../styles/Map.css";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import { fetchTripAdvisorData } from "../api/tripadvAPI";
 import axios from "axios";
 import useSavedLocations from "../../context/UseSavedLocations";
-console.log(import.meta.env.VITE_TRIPADVISOR_API_KEY);
+
+const truncateDescription = (description: string, maxLength = 100) => {
+  if (description.length > maxLength) {
+    return description.substring(0, maxLength) + '...';
+  }
+  return description;
+};
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const { addLocation } = useSavedLocations();
+  const [expandedLocations, setExpandedLocations] = useState<{ [key: string]: boolean }>({});
+  const [, setSelectedLocation] = useState<Location | null>(null);
+
   interface Location {
     coordinates: [number, number];
     placeName: string;
   }
-
-  const [, setSelectedLocation] = useState<Location | null>(null);
 
   (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
     import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -42,14 +48,10 @@ export default function Map() {
       placeholder: "Search for any location on Earth!",
     });
 
-    // Add controls to the map
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
     map.addControl(geocoder, "top-left");
-
-    // Disable map rotation
     map.dragRotate.disable();
 
-    // Handle results from geocoder
     geocoder.on("result", async (e) => {
       const { result } = e;
       const coordinates = result.geometry.coordinates;
@@ -57,7 +59,6 @@ export default function Map() {
       const location: Location = { coordinates, placeName };
       setSelectedLocation(location);
 
-      // Create popup and marker
       const popup = new mapboxgl.Popup({ offset: 25 })
         .setLngLat(coordinates)
         .setHTML(`<p>Loading...</p>`)
@@ -65,57 +66,86 @@ export default function Map() {
 
       new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
-      // Fetch data from TripAdvisor API
       try {
-        const tripAdvisorData = await fetchTripAdvisorData(placeName); // Fetching data
-        console.log("TripAdvisor data:", tripAdvisorData);
+        const response = await axios.get(`/api/wiki?placeName=${encodeURIComponent(placeName)}`);
+        const placeInfo = response.data;
 
-        if (tripAdvisorData) {
-          const { details, photos } = tripAdvisorData; // Destructure details and photos from response
+        const truncatedDescription = truncateDescription(placeInfo.extract, 100);
+        const isExpanded = expandedLocations[placeInfo.title] || false; // Check if this location is expanded
 
-          const infoHtml = `
-      <div style="text-align: center;">
-        <h3>${details.name}</h3>
-        <p>${details.description || "No description available."}</p>
-        <img src="${photos[0]?.imageUrl || "No image available"}" alt="${details.name}" style="width:100%; height:auto;"/>
-        <a href="${details.web_url}" target="_blank">Learn more</a>
-        <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
-      </div>
-    `;
-          popup.setHTML(infoHtml);
+        // Construct the HTML for the popup
+        const infoHtml = `
+          <div style="text-align: center;">
+            <h3>${placeInfo.title}</h3>
+            <p>${isExpanded ? placeInfo.extract : truncatedDescription}</p>
+            <button id="toggle-description" type="button" class="btn btn-link">${isExpanded ? 'Read Less' : 'Read More'}</button>
+            <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
+            <br/>
+            <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
+          </div>
+        `;
+        
+        popup.setHTML(infoHtml);
 
-          // add event listener for saving destination
-          document
-            .getElementById("save-destination")
-            ?.addEventListener("click", async () => {
-              const newLocation = {
-                name: details.name,
-                description: details.description || "No description available.",
-                image: photos[0]?.imageUrl || "No image available", // use the first photo or a fallback
-                web_url: details.web_url,
-              };
+        // Toggle description event listener
+        document.getElementById("toggle-description")?.addEventListener("click", (event) => {
+          event.preventDefault(); // Prevent default behavior
+          setExpandedLocations((prev) => ({
+            ...prev,
+            [placeInfo.title]: !prev[placeInfo.title], // Toggle the expanded state
+          }));
 
-              try {
-                await axios.post("/api/saved", newLocation);
-                const completeLocation = {
-                  ...newLocation,
-                  id: Date.now(),
-                  removeLocation: () => {},
-                };
-                addLocation(completeLocation);
-                alert("Destination saved!");
-              } catch (error) {
-                console.error("Error saving location:", error);
-                alert("Failed to save destination");
-              }
-            });
-        }
+          // Update the popup HTML after the state change
+          const newInfoHtml = `
+            <div style="text-align: center;">
+              <h3>${placeInfo.title}</h3>
+              <p>${!expandedLocations[placeInfo.title] ? placeInfo.extract : truncatedDescription}</p>
+              <button id="toggle-description" type="button" class="btn btn-link">${expandedLocations[placeInfo.title] ? 'Read Less' : 'Read More'}</button>
+              <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
+              <br/>
+              <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
+            </div>
+          `;
+
+          popup.setHTML(newInfoHtml); // Update the popup with the new HTML
+          // Re-add the event listener for the toggle button
+          document.getElementById("toggle-description")?.addEventListener("click", (event) => {
+            event.preventDefault();
+            setExpandedLocations((prev) => ({
+              ...prev,
+              [placeInfo.title]: !prev[placeInfo.title],
+            }));
+            popup.setHTML(newInfoHtml); // Update the popup again
+          });
+        });
+
+        // Save destination event listener
+        document.getElementById("save-destination")?.addEventListener("click", async () => {
+          const newLocation = {
+            name: placeInfo.title,
+            description: placeInfo.extract || "No description available.",
+            image: placeInfo.thumbnail || "No image available.",
+          };
+
+          try {
+            const saveResponse = await axios.post("/api/saved", newLocation);
+            const completeLocation = {
+              ...newLocation,
+              id: saveResponse.data.id,
+              removeLocation: () => {},
+            };
+            addLocation(completeLocation);
+            alert("Location saved!");
+          } catch (error) {
+            console.error("Error saving location:", error);
+            alert("Error saving location. Please try again.");
+          }
+        });
       } catch (error) {
-        console.error("Error fetching TripAdvisor data:", error);
-        popup.setHTML(`<p>Failed to load data for ${placeName}</p>`);
+        console.error("Error fetching place info:", error);
+        popup.setHTML(`<p>Error fetching data. Please try again.</p>`);
       }
 
-      // Move map to the marker
       map.flyTo({
         center: coordinates,
         zoom: 10,
@@ -123,7 +153,6 @@ export default function Map() {
       });
     });
 
-    // Add spin functionality
     let userInteracting = false;
     const spinGlobe = throttle(() => {
       const zoom = map.getZoom();
@@ -135,7 +164,6 @@ export default function Map() {
       }
     }, 100);
 
-    // Event listeners for user interaction
     map.on("mousedown", () => {
       userInteracting = true;
     });
@@ -160,7 +188,7 @@ export default function Map() {
     return () => {
       map.remove();
     };
-  }, [addLocation]);
+  }, [addLocation, expandedLocations]);
 
   return (
     <div

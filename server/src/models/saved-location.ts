@@ -7,7 +7,6 @@ interface SavedLocationAttributes {
   name: string;
   description: string;
   image: string;
-  web_url: string;
 }
 
 interface SavedLocationCreationAttributes extends Optional<SavedLocationAttributes, 'id'> {}
@@ -17,7 +16,6 @@ export class SavedLocation extends Model<SavedLocationAttributes, SavedLocationC
   public name!: string;
   public description!: string;
   public image!: string;
-  public web_url!: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -42,11 +40,7 @@ export function SavedLocationFactory(sequelize: Sequelize): typeof SavedLocation
       image: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      web_url: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+    },
     },
     {
       tableName: 'saved_locations',

@@ -16,27 +16,33 @@ router.get('/', async (_req: Request, res: Response) => {
 });
 
 // POST /api/saved - add a new saved location
-router.post('/', async (req: Request, res: Response) => {
-  const newLocation = req.body;
+  router.post('/', async (req: Request, res: Response) => {
+    console.log("Incoming request body:", req.body); // Log the incoming request body
+    
+    const newLocation = req.body;
 
-  // val the incoming data
-  if (
-    !newLocation.name ||
-    !newLocation.description ||
-    !newLocation.image ||
-    !newLocation.web_url
-  ) {
-    res.status(400).json({ error: 'Invalid location data' });
-  }
+    // Validate the incoming data
+    if (
+        !newLocation.name ||
+        !newLocation.description ||
+        !newLocation.image ||
+        typeof newLocation.name !== "string" ||
+        typeof newLocation.description !== "string" ||
+        typeof newLocation.image !== "string"
+    ) {
+        console.log("Validation failed:", newLocation); // Log validation failure
+        return res.status(400).json({ error: 'Invalid location data' });
+    }
 
-  try {
-    const savedLocation = await SavedLocation.create(newLocation); // save to the database
-    return res.status(201).json(savedLocation); // respond with the newly created location
-  } catch (error) {
-    console.error("Error creating saved location:", error);
-    return res.status(500).json({ error: "Error creating saved location" });
-  }
+    try {
+        const savedLocation = await SavedLocation.create(newLocation); // Save to the database
+        return res.status(201).json(savedLocation); // Respond with the newly created location
+    } catch (error) {
+        console.error("Error creating saved location:", error);
+        return res.status(500).json({ error: "Error creating saved location" });
+    }
 });
+
 
 // DELETE /api/saved/:id - remove a saved location
 router.delete('/:id', async (req: Request, res: Response) => {
@@ -53,6 +59,5 @@ router.delete('/:id', async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Error deleting location" });
   }
 });
-
 
 export default router;

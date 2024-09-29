@@ -1,17 +1,33 @@
 // save component to display saved locations in a table format
 import "../styles/Save.css";
 import useSavedLocations from "../../context/UseSavedLocations";
+import { useState } from "react";
 
 interface Destination {
   id: number;
   image: string;
   name: string;
   description: string;
-  web_url: string;
 }
+
+
+const truncateText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return text.substring(0, maxLength) + '...';
+};
 
 const Save = () => {
   const { savedLocations, removeLocation } = useSavedLocations();
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: number]: boolean }>({});
+
+  const toggleDescription = (index: number) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   return (
     <div>
@@ -22,7 +38,6 @@ const Save = () => {
             <th>Name</th>
             <th>Description</th>
             <th>Image</th>
-            <th>Link</th>
             <th>Remove</th>
           </tr>
         </thead>
@@ -30,16 +45,22 @@ const Save = () => {
           {savedLocations.map((location: Destination, index: number) => (
             <tr key={index}>
               <td>{location.name}</td>
-              <td>{location.description}</td>
+              <td>
+                {expandedDescriptions[index]
+                  ? location.description
+                  : truncateText(location.description, 100)}
+                <button
+                  className="btn btn-link"
+                  onClick={() => toggleDescription(index)}
+                >
+                  {expandedDescriptions[index] ? 'Show Less' : 'Read More'}
+                </button>
+              </td>
               <td>
                 <img src={location.image} alt={location.name} />
               </td>
               <td>
-                <a href={location.web_url} target="_blank" rel="noreferrer">
-                  Click For Destination Info
-                </a>
-              </td>
-              <td>
+                <br />
                 <button
                   className="btn btn-danger"
                   onClick={() => removeLocation(location.id)}
