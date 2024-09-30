@@ -2,7 +2,6 @@
 import "../styles/Save.css";
 import useSavedLocations from "../context/UseSavedLocations";
 import { useState } from "react";
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface Destination {
   id: number;
@@ -55,7 +54,6 @@ const Save = () => {
                   onClick={() => toggleDescription(index)}
                 >
                   {expandedDescriptions[index] ? 'Show Less' : 'Read More'}
-                  {expandedDescriptions[index] ? <FaChevronUp /> : <FaChevronDown />}
                 </button>
               </td>
               <td className="image-cell">
