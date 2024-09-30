@@ -1,7 +1,8 @@
 // save component to display saved locations in a table format
 import "../styles/Save.css";
-import useSavedLocations from "../../context/UseSavedLocations";
+import useSavedLocations from "../context/UseSavedLocations";
 import { useState } from "react";
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface Destination {
   id: number;
@@ -30,7 +31,7 @@ const Save = () => {
   };
 
   return (
-    <div>
+    <div className="table-container">
       <h1>My Saved Destinations</h1>
       <table className="table">
         <thead>
@@ -50,19 +51,19 @@ const Save = () => {
                   ? location.description
                   : truncateText(location.description, 100)}
                 <button
-                  className="btn btn-link"
+                  className="btn"
                   onClick={() => toggleDescription(index)}
                 >
                   {expandedDescriptions[index] ? 'Show Less' : 'Read More'}
+                  {expandedDescriptions[index] ? <FaChevronUp /> : <FaChevronDown />}
                 </button>
               </td>
-              <td>
+              <td className="image-cell">
                 <img src={location.image} alt={location.name} />
               </td>
               <td>
-                <br />
                 <button
-                  className="btn btn-danger"
+                  className="btn"
                   onClick={() => removeLocation(location.id)}
                 >
                   Remove
@@ -75,5 +76,6 @@ const Save = () => {
     </div>
   );
 };
+
 
 export default Save;

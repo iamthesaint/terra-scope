@@ -6,19 +6,20 @@ import { useEffect, useRef, useState } from "react";
 import "../styles/Map.css";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import axios from "axios";
-import useSavedLocations from "../../context/UseSavedLocations";
+import useSavedLocations from "../context/UseSavedLocations";
 
 const truncateDescription = (description: string, maxLength = 100) => {
-  if (description.length > maxLength) {
-    return description.substring(0, maxLength) + '...';
-  }
-  return description;
+  return description.length > maxLength
+    ? description.substring(0, maxLength) + "..."
+    : description;
 };
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const { addLocation } = useSavedLocations();
-  const [expandedLocations, setExpandedLocations] = useState<{ [key: string]: boolean }>({});
+  const [expandedLocations, setExpandedLocations] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [, setSelectedLocation] = useState<Location | null>(null);
 
   interface Location {
@@ -67,80 +68,80 @@ export default function Map() {
       new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
       try {
-        const response = await axios.get(`/api/wiki?placeName=${encodeURIComponent(placeName)}`);
+        const response = await axios.get(
+          `/api/wiki?placeName=${encodeURIComponent(placeName)}`
+        );
         const placeInfo = response.data;
 
-        const truncatedDescription = truncateDescription(placeInfo.extract, 100);
-        const isExpanded = expandedLocations[placeInfo.title] || false; // Check if this location is expanded
+        const isExpanded = expandedLocations[placeInfo.title] || false;
 
         // Construct the HTML for the popup
         const infoHtml = `
           <div style="text-align: center;">
             <h3>${placeInfo.title}</h3>
-            <p>${isExpanded ? placeInfo.extract : truncatedDescription}</p>
-            <button id="toggle-description" type="button" class="btn btn-link">${isExpanded ? 'Read Less' : 'Read More'}</button>
+            <p>${isExpanded ? placeInfo.extract : truncateDescription(placeInfo.extract)}</p>
+            <span id="toggle-description" style="cursor: pointer;">
+              ${isExpanded ? "<FaChevronUp />" : "<FaChevronDown />"}
+            </span>
             <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
             <br/>
             <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
           </div>
         `;
-        
+
         popup.setHTML(infoHtml);
 
         // Toggle description event listener
-        document.getElementById("toggle-description")?.addEventListener("click", (event) => {
-          event.preventDefault(); // Prevent default behavior
-          setExpandedLocations((prev) => ({
-            ...prev,
-            [placeInfo.title]: !prev[placeInfo.title], // Toggle the expanded state
-          }));
+        document
+          .getElementById("toggle-description")
+          ?.addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent default behavior
+            const newExpandedState = !isExpanded; // Toggle the expanded state
+            setExpandedLocations((prev) => ({
+              ...prev,
+              [placeInfo.title]: newExpandedState, // Update the expanded state
+            }));
 
-          // Update the popup HTML after the state change
-          const newInfoHtml = `
+            // Update the popup with the new HTML
+            const newInfoHtml = `
             <div style="text-align: center;">
               <h3>${placeInfo.title}</h3>
-              <p>${!expandedLocations[placeInfo.title] ? placeInfo.extract : truncatedDescription}</p>
-              <button id="toggle-description" type="button" class="btn btn-link">${expandedLocations[placeInfo.title] ? 'Read Less' : 'Read More'}</button>
+              <p>${newExpandedState ? placeInfo.extract : truncateDescription(placeInfo.extract)}</p>
+              <span id="toggle-description" style="cursor: pointer;">
+                ${newExpandedState ? "<FaChevronUp />" : "<FaChevronDown />"}
+              </span>
               <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
-              <br/>
               <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
             </div>
           `;
 
-          popup.setHTML(newInfoHtml); // Update the popup with the new HTML
-          // Re-add the event listener for the toggle button
-          document.getElementById("toggle-description")?.addEventListener("click", (event) => {
-            event.preventDefault();
-            setExpandedLocations((prev) => ({
-              ...prev,
-              [placeInfo.title]: !prev[placeInfo.title],
-            }));
-            popup.setHTML(newInfoHtml); // Update the popup again
+            popup.setHTML(newInfoHtml); // Update the popup with the new HTML
           });
-        });
 
         // Save destination event listener
-        document.getElementById("save-destination")?.addEventListener("click", async () => {
-          const newLocation = {
-            name: placeInfo.title,
-            description: placeInfo.extract || "No description available.",
-            image: placeInfo.thumbnail || "No image available.",
-          };
-
-          try {
-            const saveResponse = await axios.post("/api/saved", newLocation);
-            const completeLocation = {
-              ...newLocation,
-              id: saveResponse.data.id,
-              removeLocation: () => {},
+        document
+          .getElementById("save-destination")
+          ?.addEventListener("click", async () => {
+            const newLocation = {
+              name: placeInfo.title,
+              description: placeInfo.extract || "No description available.",
+              image: placeInfo.thumbnail || "No image available.",
             };
-            addLocation(completeLocation);
-            alert("Location saved!");
-          } catch (error) {
-            console.error("Error saving location:", error);
-            alert("Error saving location. Please try again.");
-          }
-        });
+
+            try {
+              const saveResponse = await axios.post("/api/saved", newLocation);
+              const completeLocation = {
+                ...newLocation,
+                id: saveResponse.data.id,
+                removeLocation: () => {},
+              };
+              addLocation(completeLocation);
+              alert("Location saved!");
+            } catch (error) {
+              console.error("Error saving location:", error);
+              alert("Error saving location. Please try again.");
+            }
+          });
       } catch (error) {
         console.error("Error fetching place info:", error);
         popup.setHTML(`<p>Error fetching data. Please try again.</p>`);
