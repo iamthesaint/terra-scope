@@ -8,7 +8,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import axios from "axios";
 import useSavedLocations from "../context/UseSavedLocations";
 
-const truncateDescription = (description: string, maxLength = 100) => {
+const truncateDescription = (description: string, maxLength = 500) => {
   return description.length > maxLength
     ? description.substring(0, maxLength) + "..."
     : description;
@@ -77,10 +77,10 @@ export default function Map() {
 
         // Construct the HTML for the popup
         const infoHtml = `
-          <div style="text-align: center;">
+         <div style="text-align: center;">
             <h3>${placeInfo.title}</h3>
             <p>${isExpanded ? placeInfo.extract : truncateDescription(placeInfo.extract)}</p>
-            <span id="toggle-description" style="cursor: pointer;">
+            <span id="toggle-description" class="toggle-description">
               ${isExpanded ? "<FaChevronUp />" : "<FaChevronDown />"}
             </span>
             <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
