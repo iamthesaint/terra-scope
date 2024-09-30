@@ -75,7 +75,29 @@ export default function Map() {
 
         const isExpanded = expandedLocations[placeInfo.title] || false;
 
-        // Construct the HTML for the popup
+        // weather
+      const fetchWeatherData = async (coordinates: [number, number]) => {
+        const [lng, lat] = coordinates;
+        const weatherApiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
+        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${weatherApiKey}&units=imperial`;
+
+        try {
+          const response = await axios.get(weatherUrl);
+          return response.data;
+        } catch (error) {
+          console.error("Error fetching weather data:", error);
+          return null;
+        }
+      };
+
+      const weatherData = await fetchWeatherData(coordinates);
+      const weatherDescription = weatherData
+        ? weatherData.weather[0].description
+        : "Weather data not available";
+      const temperature = weatherData ? weatherData.main.temp : "N/A";
+
+
+        // construct the HTML for the popup
         const infoHtml = `
          <div style="text-align: center;">
             <h3>${placeInfo.title}</h3>
@@ -83,6 +105,8 @@ export default function Map() {
             <span id="toggle-description" class="toggle-description">
               ${isExpanded ? "<FaChevronUp />" : "<FaChevronDown />"}
             </span>
+           <p><strong>Current Weather:</strong> ${weatherDescription}, ${temperature}°F</p>
+
             <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
             <br/>
             <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
