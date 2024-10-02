@@ -1,5 +1,6 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/loginPage.css";
 
 import Auth from "../utils/auth";
 import { login } from "../api/authAPI";

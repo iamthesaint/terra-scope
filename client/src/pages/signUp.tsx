@@ -2,6 +2,7 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import Auth from '../utils/auth';  
 import { signUp } from "../api/authAPI"; 
 import { UserLogin } from "../interfaces/UserLogin"; 
+import "../styles/signupPage.css";
 
 export default function SignUp() {
   const [signUpData, setSignUpData] = useState<UserLogin>({
