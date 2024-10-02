@@ -67,14 +67,6 @@ export default function Map() {
 
       new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
-      try {
-        const response = await axios.get(
-          `/api/wiki?placeName=${encodeURIComponent(placeName)}`
-        );
-        const placeInfo = response.data;
-
-        const isExpanded = expandedLocations[placeInfo.title] || false;
-
         // weather
       const fetchWeatherData = async (coordinates: [number, number]) => {
         const [lng, lat] = coordinates;
@@ -96,6 +88,11 @@ export default function Map() {
         : "Weather data not available";
       const temperature = weatherData ? weatherData.main.temp : "N/A";
 
+      // wikipedia
+      try {
+        const response = await axios.get(`/api/wiki?placeName=${encodeURIComponent(placeName)}`);
+        const placeInfo = response.data;
+        const isExpanded = expandedLocations[placeName] || false;
 
         // construct the HTML for the popup
         const infoHtml = `

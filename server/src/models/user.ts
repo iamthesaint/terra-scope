@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
+import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -19,6 +19,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
+  // Hash the password before saving the user
   public async setPassword(password: string) {
     const saltRounds = 10;
     this.password = await bcrypt.hash(password, saltRounds);
@@ -50,11 +51,9 @@ export function UserFactory(sequelize: Sequelize): typeof User {
           await user.setPassword(user.password);
         },
         beforeUpdate: async (user: User) => {
-          if (user.changed('password')) {
-            await user.setPassword(user.password);
-          }
+          await user.setPassword(user.password);
         },
-      },
+      }
     }
   );
 

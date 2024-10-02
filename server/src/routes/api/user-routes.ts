@@ -1,12 +1,10 @@
-
 import express from 'express';
 import {
+  getAllUsers,
+  getUserById,
   createUser,
   updateUser,
   deleteUser,
-  getAllUsers,
-  getUserById,
-
 } from '../../controllers/user-controller.js';
 
 const router = express.Router();
@@ -26,5 +24,4 @@ router.put('/:id', updateUser);
 // DELETE /users/:id - Delete a user by id
 router.delete('/:id', deleteUser);
 
-export default router;
-
+export { router as userRouter };

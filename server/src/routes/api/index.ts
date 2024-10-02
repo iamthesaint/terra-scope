@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import userRouter from './user-routes.js';
-import savedLocationsRouter from '../saved.js';
-import wikiRouter from './wiki.js';
+import { userRouter } from './user-routes.js';
+import  savedLocationsRouter  from '../saved.js';
+import wikiRouter from '../api/wiki.js';
 
 
 const router = Router();

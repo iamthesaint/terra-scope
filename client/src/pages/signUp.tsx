@@ -1,6 +1,6 @@
 import '../styles/signupPage.css'
 
-import auth from '../utils/auth.js';
+import Auth from '../utils/auth.js';
 import { useState, FormEvent, ChangeEvent } from "react";
 import { UserLogin } from '../interfaces/UserLogin.js';
 import { signUp } from '../api/authAPI.js';
@@ -22,7 +22,7 @@ const Signup = () => {
           // Call the sign up API endpoint with signUpData
           const data = await signUp(signUpData);
           // If sign up is successful, call Auth.login to store the token in localStorage
-          auth.login(data.token);
+          Auth.login(data.token);
           console.log('YAY IT WORKED')
         } catch (err) {
           console.error('Failed to login', err);  // Log any errors that occur during sign up
