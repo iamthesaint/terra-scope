@@ -27,8 +27,8 @@ export default function Map() {
     placeName: string;
   }
 
-  (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
-    import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+  // Set access token outside of the import statement
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -42,8 +42,7 @@ export default function Map() {
     });
 
     const geocoder = new MapboxGeocoder({
-      accessToken: (mapboxgl as typeof mapboxgl & { accessToken: string })
-        .accessToken,
+      accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl,
       zoom: 10,
       placeholder: "Search for any location on Earth!",
@@ -67,7 +66,7 @@ export default function Map() {
 
       new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
-        // weather
+      // Fetch weather data
       const fetchWeatherData = async (coordinates: [number, number]) => {
         const [lng, lat] = coordinates;
         const weatherApiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
@@ -88,13 +87,13 @@ export default function Map() {
         : "Weather data not available";
       const temperature = weatherData ? weatherData.main.temp : "N/A";
 
-      // wikipedia
+      // Wikipedia data fetching
       try {
         const response = await axios.get(`/api/wiki?placeName=${encodeURIComponent(placeName)}`);
         const placeInfo = response.data;
         const isExpanded = expandedLocations[placeName] || false;
 
-        // construct the HTML for the popup
+        // Construct HTML for the popup
         const infoHtml = `
          <div style="text-align: center;">
             <h3>${placeInfo.title}</h3>
@@ -216,7 +215,4 @@ export default function Map() {
     <div
       className="map-container"
       ref={mapContainerRef}
-      style={{ width: "100%", height: "100vh" }}
-    />
-  );
-}
+      style={{ width: "100%", height: "100
