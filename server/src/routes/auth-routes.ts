@@ -1,63 +1,60 @@
-import { Router, Request, Response } from 'express';
-import { User } from '../models/user.js';  // Import the User model
-import jwt from 'jsonwebtoken';  // Import the JSON Web Token library
-import bcrypt from 'bcrypt';  // Import the bcrypt library for password hashing
+import { Router, Request, Response } from "express";
+import { User } from "../models/user.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
+const router = Router();
 
-// Login function to authenticate a user
+
 export const login = async (req: Request, res: Response) => {
-  const { username, password } = req.body;  // Extract username and password from request body
-
-  // Find the user in the database by username
+  // if the user exists and the password is correct, return a JWT token
+  const { username, password } = req.body;
   const user = await User.findOne({
-    where: { username },
+    where: {
+      username,
+    },
   });
-
-  // If user is not found, send an authentication failed response
   if (!user) {
-    return res.status(401).json({ message: 'Authentication failed' });
+    return res.status(401).json({ message: "Invalid username or password" });
   }
 
-  // Compare the provided password with the stored hashed password
   const passwordIsValid = await bcrypt.compare(password, user.password);
-  // If password is invalid, send an authentication failed response
   if (!passwordIsValid) {
-    return res.status(401).json({ message: 'Authentication failed' });
+    return res.status(401).json({ message: "Invalid username or password" });
   }
 
-  // Get the secret key from environment variables
-  const secretKey = process.env.JWT_SECRET_KEY || '';
+  const secretKey = process.env.JWT_SECRET_KEY || "";
 
-  // Generate a JWT token for the authenticated user
-  const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
-  return res.json({ token });  // Send the token as a JSON response
+  const token = jwt.sign({ username }, secretKey, { expiresIn: "1h" });
+  return res.status(200).json({ token });
 };
 
+router.post("/login", login);
+
+
 export const signUp = async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
+
   try {
-    const { username, password } = req.body;
-    const newUser = await User.create({ username, password });
+    const existingUser = await User.findOne({ where: { username } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
 
-    console.log(newUser);
-    
-      // Get the secret key from environment variables
-    const secretKey = process.env.JWT_SECRET_KEY || '';
-
-    // Generate a JWT token for the authenticated user
-    const token = jwt.sign({ username: newUser.username }, secretKey, { expiresIn: '1h' });
-    res.json({ token });  // Send the token as a JSON response
-    // res.status(201).json(newUser);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ username, password: hashedPassword });
+    const secretKey = process.env.JWT_SECRET_KEY || "";
+    const token = jwt.sign({ id: newUser.id, username: newUser.username }, secretKey, { expiresIn: "1h" });
+    return res.status(201).json({ token });
+  } catch (error) {
+    return res.status(500).json({ message: "Error creating user" });
   }
 }
 
-// Create a new router instance
-const router = Router();
+router.post("/signup", signUp);
 
-// POST /login - Login a user
-router.post('/login', login);  // Define the login route
-
-// POST /users - Create a new user
-router.post('/signup', signUp);
-
-export default router;  // Export the router instance
+export default router;

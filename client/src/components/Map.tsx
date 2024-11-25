@@ -5,20 +5,28 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import "../styles/Map.css";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import { fetchTripAdvisorData } from "../api/tripadvAPI";
 import axios from "axios";
-import useSavedLocations from "../../context/UseSavedLocations";
+import useSavedLocations from "../context/UseSavedLocations";
+
+const truncateDescription = (description: string, maxLength = 500) => {
+  return description.length > maxLength
+    ? description.substring(0, maxLength) + "..."
+    : description;
+};
 
 export default function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const { addLocation } = useSavedLocations();
+  const [expandedLocations, setExpandedLocations] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [, setSelectedLocation] = useState<Location | null>(null);
+
   interface Location {
     coordinates: [number, number];
     placeName: string;
   }
 
-  const [, setSelectedLocation] = useState<Location | null>(null);
-  
   (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
     import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -34,20 +42,17 @@ export default function Map() {
     });
 
     const geocoder = new MapboxGeocoder({
-      accessToken: (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken,
+      accessToken: (mapboxgl as typeof mapboxgl & { accessToken: string })
+        .accessToken,
       mapboxgl: mapboxgl,
       zoom: 10,
       placeholder: "Search for any location on Earth!",
     });
 
-    // Add controls to the map
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
     map.addControl(geocoder, "top-left");
-
-    // Disable map rotation
     map.dragRotate.disable();
 
-    // Handle results from geocoder
     geocoder.on("result", async (e) => {
       const { result } = e;
       const coordinates = result.geometry.coordinates;
@@ -55,63 +60,114 @@ export default function Map() {
       const location: Location = { coordinates, placeName };
       setSelectedLocation(location);
 
-      // Create popup and marker
       const popup = new mapboxgl.Popup({ offset: 25 })
         .setLngLat(coordinates)
         .setHTML(`<p>Loading...</p>`)
         .addTo(map);
 
-      new mapboxgl.Marker()
-        .setLngLat(coordinates)
-        .addTo(map);
+      new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 
-      // Fetch data from TripAdvisor API
+        // weather
+      const fetchWeatherData = async (coordinates: [number, number]) => {
+        const [lng, lat] = coordinates;
+        const weatherApiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
+        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${weatherApiKey}&units=imperial`;
+
+        try {
+          const response = await axios.get(weatherUrl);
+          return response.data;
+        } catch (error) {
+          console.error("Error fetching weather data:", error);
+          return null;
+        }
+      };
+
+      const weatherData = await fetchWeatherData(coordinates);
+      const weatherDescription = weatherData
+        ? weatherData.weather[0].description
+        : "Weather data not available";
+      const temperature = weatherData ? weatherData.main.temp : "N/A";
+
+      // wikipedia
       try {
-        const tripAdvisorData = await fetchTripAdvisorData(placeName);
-        console.log("TripAdvisor data:", tripAdvisorData);
-        if (tripAdvisorData) {
-          const infoHtml = `
+        const response = await axios.get(`/api/wiki?placeName=${encodeURIComponent(placeName)}`);
+        const placeInfo = response.data;
+        const isExpanded = expandedLocations[placeName] || false;
+
+        // construct the HTML for the popup
+        const infoHtml = `
+         <div style="text-align: center;">
+            <h3>${placeInfo.title}</h3>
+            <p>${isExpanded ? placeInfo.extract : truncateDescription(placeInfo.extract)}</p>
+            <span id="toggle-description" class="toggle-description">
+              ${isExpanded ? "<FaChevronUp />" : "<FaChevronDown />"}
+            </span>
+           <p><strong>Current Weather:</strong> ${weatherDescription}, ${temperature}°F</p>
+
+            <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
+            <br/>
+            <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
+          </div>
+        `;
+
+        popup.setHTML(infoHtml);
+
+        // Toggle description event listener
+        document
+          .getElementById("toggle-description")
+          ?.addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent default behavior
+            const newExpandedState = !isExpanded; // Toggle the expanded state
+            setExpandedLocations((prev) => ({
+              ...prev,
+              [placeInfo.title]: newExpandedState, // Update the expanded state
+            }));
+
+            // Update the popup with the new HTML
+            const newInfoHtml = `
             <div style="text-align: center;">
-              <h3>${tripAdvisorData.name}</h3>
-              <p>${tripAdvisorData.description || "No description available."}</p>
-              <img src="${tripAdvisorData.image}" alt="${tripAdvisorData.name}" style="width:100%; height:auto;"/>
-              <a href="${tripAdvisorData.web_url}" target="_blank">Learn more</a>
-              <button id="save-destination" class="btn btn-primary">Add to Your Saved Destinations</button>
+              <h3>${placeInfo.title}</h3>
+              <p>${newExpandedState ? placeInfo.extract : truncateDescription(placeInfo.extract)}</p>
+              <span id="toggle-description" style="cursor: pointer;">
+                ${newExpandedState ? "<FaChevronUp />" : "<FaChevronDown />"}
+              </span>
+              <img src="${placeInfo.thumbnail}" alt="${placeInfo.title}" style="width:100%; height:auto;"/>
+              <button id="save-destination" type="button" class="btn btn-primary">Add to Your Saved Destinations</button>
             </div>
           `;
-          popup.setHTML(infoHtml);
 
-          // Add event listener for saving destination
-          document.getElementById("save-destination")?.addEventListener("click", async () => {
+            popup.setHTML(newInfoHtml); // Update the popup with the new HTML
+          });
+
+        // Save destination event listener
+        document
+          .getElementById("save-destination")
+          ?.addEventListener("click", async () => {
             const newLocation = {
-              name: tripAdvisorData.name,
-              description: tripAdvisorData.description || "No description available.",
-              image: tripAdvisorData.image,
-              web_url: tripAdvisorData.web_url,
+              name: placeInfo.title,
+              description: placeInfo.extract || "No description available.",
+              image: placeInfo.thumbnail || "No image available.",
             };
 
             try {
-              await axios.post('/api/saved', newLocation); 
+              const saveResponse = await axios.post("/api/saved", newLocation);
               const completeLocation = {
                 ...newLocation,
-                id: Date.now(), // or any unique identifier
-                removeLocation: () => {} // or any appropriate function
+                id: saveResponse.data.id,
+                removeLocation: () => {},
               };
               addLocation(completeLocation);
-              alert("Destination saved!");
+              alert("Location saved!");
             } catch (error) {
               console.error("Error saving location:", error);
-              alert("Failed to save destination");
+              alert("Error saving location. Please try again.");
             }
           });
-
-        }
       } catch (error) {
-        console.error("Error fetching TripAdvisor data:", error);
-        popup.setHTML(`<p>Failed to load data for ${placeName}</p>`);
+        console.error("Error fetching place info:", error);
+        popup.setHTML(`<p>Error fetching data. Please try again.</p>`);
       }
 
-      // Move map to the marker
       map.flyTo({
         center: coordinates,
         zoom: 10,
@@ -119,7 +175,6 @@ export default function Map() {
       });
     });
 
-    // Add spin functionality
     let userInteracting = false;
     const spinGlobe = throttle(() => {
       const zoom = map.getZoom();
@@ -131,18 +186,31 @@ export default function Map() {
       }
     }, 100);
 
-    // Event listeners for user interaction
-    map.on("mousedown", () => { userInteracting = true; });
-    map.on("mouseup", () => { userInteracting = false; spinGlobe(); });
-    map.on("dragend", () => { userInteracting = false; spinGlobe(); });
-    map.on("pitchend", () => { userInteracting = false; spinGlobe(); });
-    map.on("rotateend", () => { userInteracting = false; spinGlobe(); });
+    map.on("mousedown", () => {
+      userInteracting = true;
+    });
+    map.on("mouseup", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
+    map.on("dragend", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
+    map.on("pitchend", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
+    map.on("rotateend", () => {
+      userInteracting = false;
+      spinGlobe();
+    });
     map.on("moveend", spinGlobe);
 
     return () => {
       map.remove();
     };
-  }, [addLocation]);
+  }, [addLocation, expandedLocations]);
 
   return (
     <div

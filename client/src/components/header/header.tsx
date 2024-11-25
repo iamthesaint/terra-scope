@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Profile from "../profile/profile.js";
 import auth from "../../utils/auth.js";
 import { useState, useEffect } from "react";
+import logo from "../../assets/tzb.svg"
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Make sure to include this for Bootstrap JS
@@ -44,7 +45,10 @@ export default function Header() {
   return (
     <div>
       <header>
-        <h1 className="brand">TripZen</h1>
+        <Link to="/">
+          <img src={logo} alt="TripZen" className="logo" />
+        </Link>
+          <h1 className="brand">TripZen</h1>
         {!loginCheck ? (
           <Link to="/login" className="login">
             <h3 className="login">Log In</h3>

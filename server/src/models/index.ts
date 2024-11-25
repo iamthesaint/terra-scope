@@ -32,15 +32,4 @@ const sequelize = process.env.DATABASE_URL
 const User = UserFactory(sequelize);
 const SavedLocation = SavedLocationFactory(sequelize);
 
-// sync models with database
-sequelize.sync({ alter: true })
-  .then(() => {
-    console.log('Database & tables created!');
-  })
-  .catch((error) => {
-    console.error('Error creating database & tables:', error);
-  });
-
-// export all models
-
 export { sequelize, User, SavedLocation };

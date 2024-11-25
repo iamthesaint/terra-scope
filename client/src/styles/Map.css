@@ -92,3 +92,9 @@
 .mapboxgl-marker {
   color: orange;
 }
+
+.toggle-description {
+  cursor: pointer;
+  color: #007bff; 
+  margin-top: 5px;
+}

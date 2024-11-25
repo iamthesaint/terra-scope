@@ -12,10 +12,9 @@ export const authenticateToken = (
   res: Response,
   next: NextFunction
 ) => {
-  
   // verify the token exists and add the user data to the request object
-
-const authHeader = req.headers.authorization;
+  
+  const authHeader = req.headers.authorization;
 
   if (authHeader) {
     const token = authHeader.split(" ")[1];
@@ -33,5 +32,3 @@ const authHeader = req.headers.authorization;
     res.sendStatus(401); // unauthorized
   }
 };
-
-
