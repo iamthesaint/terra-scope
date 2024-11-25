@@ -28,5 +28,10 @@ export default defineConfig({
     },
     // Enable minification for smaller build size
     minify: 'esbuild',
+    // Disable esbuild worker threads
+    esbuild: {
+      worker: false,
+    },
   },
 });
+
