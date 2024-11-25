@@ -215,4 +215,7 @@ export default function Map() {
     <div
       className="map-container"
       ref={mapContainerRef}
-      style={{ width: "100%", height: "100
+      style={{ width: "100%", height: "100%" }}
+    ></div>
+  );
+}
