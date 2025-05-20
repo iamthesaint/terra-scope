@@ -27,8 +27,12 @@ export default function Map() {
     placeName: string;
   }
 
-  (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken =
-    import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+
+  if (!mapboxToken) {
+    throw new Error("Mapbox token is not defined");
+  }
+  (mapboxgl as typeof mapboxgl & { accessToken: string }).accessToken = mapboxToken;
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
