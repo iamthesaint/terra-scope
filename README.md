@@ -9,7 +9,6 @@ A visually stunning application to aid in researching travel locations. Through 
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
 - [Questions](#questions)
 
 ## Installation
@@ -22,12 +21,7 @@ A visually stunning application to aid in researching travel locations. Through 
 [Watch a walkthrough of Terra Scope!](https://youtu.be/yEcrkbRSErE)
 
 
-<img width="2035" alt="tripzen-home" src="https://github.com/user-attachments/assets/cfc866bc-5e17-4bf7-989d-eed8a64d9cbc">
-
-<img width="1409" alt="tripzen-login" src="https://github.com/user-attachments/assets/73790b65-74c0-443d-81c3-31c0707b0002">
-
-## License
-This project is licensed under the [MIT](https://opensource.org/licenses/MIT) license.
+<img width="1512" alt="Screenshot 2025-05-20 at 10 36 54 PM" src="https://github.com/user-attachments/assets/d920990a-cea1-4e29-8ecd-89c5b5754600" />
 
 ## Questions
 If you have any questions, feel free to reach out via github.
